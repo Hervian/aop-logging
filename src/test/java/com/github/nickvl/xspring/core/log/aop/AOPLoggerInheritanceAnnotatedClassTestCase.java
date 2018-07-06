@@ -68,7 +68,7 @@ public class AOPLoggerInheritanceAnnotatedClassTestCase {
         expectSimpleBarServiceLogger(GeneralBazService.class);
         Capture<ArgumentDescriptor> captured = new Capture<ArgumentDescriptor>();
         EasyMock.expect(logAdapter.toMessage(eq("inImpl"), aryEq(PARAM_VALUE), capture(captured))).andReturn(">");
-        EasyMock.expect(logAdapter.toMessage("inImpl", 2, Void.TYPE)).andReturn("<");
+        EasyMock.expect(logAdapter.toMessage(eq("inImpl"), eq(2), eq(Void.TYPE), capture(captured))).andReturn("<");
 
         expectInfoLogging();
 
@@ -90,7 +90,7 @@ public class AOPLoggerInheritanceAnnotatedClassTestCase {
         expectSimpleBarServiceLogger(AuxBazService.class);
         Capture<ArgumentDescriptor> captured = new Capture<ArgumentDescriptor>();
         EasyMock.expect(logAdapter.toMessage(eq("inImpl"), aryEq(PARAM_VALUE), capture(captured))).andReturn(">");
-        EasyMock.expect(logAdapter.toMessage("inImpl", 2, Void.TYPE)).andReturn("<");
+        EasyMock.expect(logAdapter.toMessage(eq("inImpl"), eq(2), eq(Void.TYPE), capture(captured))).andReturn("<");
 
         expectDebugLogging();
 
@@ -127,7 +127,9 @@ public class AOPLoggerInheritanceAnnotatedClassTestCase {
     }
 
     private void assertParams(ArgumentDescriptor descriptor, String[] names, boolean first, boolean second) {
-        assertArrayEquals(names, descriptor.getNames());
+        for (int i = 0; i < names.length; i++) {
+            assertEquals(names[i], descriptor.getMethodParameters()[i].getParameterName());
+        }
         assertEquals(first, descriptor.isArgumentIndex(0));
         assertEquals(second, descriptor.isArgumentIndex(1));
     }

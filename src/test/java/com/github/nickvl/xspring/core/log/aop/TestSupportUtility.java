@@ -69,25 +69,31 @@ public final class TestSupportUtility {
         return EasyMock.cmp(expected, REFLECTION_COMPARATOR, LogicalOperator.EQUAL);
     }
 
-    public static ArgumentDescriptor createArgumentDescriptor(String[] argumentNames, boolean... indexes) throws NoSuchMethodException,
+
+    public static ArgumentDescriptor createArgumentDescriptor(MethodParameter[] methodParameters, Object instance, boolean... indexes) throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException, InstantiationException {
+        return createArgumentDescriptor(methodParameters, false, false, instance, indexes);
+    }
+
+    public static ArgumentDescriptor createArgumentDescriptor(MethodParameter[] methodParameters, boolean logResult, boolean logThis, Object instance, boolean... indexes) throws NoSuchMethodException,
+        IllegalAccessException, InvocationTargetException, InstantiationException {
         BitSet argIndexes = new BitSet(indexes.length);
         for (int i = 0; i < indexes.length; i++) {
             if (indexes[i]) {
                 argIndexes.set(i);
             }
         }
-        return createArgumentDescriptor(argIndexes, argumentNames);
+        return createArgumentDescriptor(argIndexes, methodParameters, logResult, logThis, instance);
     }
 
-    public static ArgumentDescriptor createArgumentDescriptor(BitSet indexes, String[] argumentNames) throws NoSuchMethodException,
+    public static ArgumentDescriptor createArgumentDescriptor(BitSet indexes, MethodParameter[] methodParameters, boolean logResult, boolean logThis, Object instance) throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException, InstantiationException {
-        if (argumentNames != null) {
-            assertTrue(String.format("wrong arguments: argCount[%s] more then argNames[%s]", indexes, Arrays.toString(argumentNames)),
-                    indexes.length() <= argumentNames.length);
+        if (methodParameters != null) {
+            assertTrue(String.format("wrong arguments: argCount[%s] more then argNames[%s]", indexes, Arrays.toString(methodParameters)),
+                    indexes.length() <= methodParameters.length);
         }
-        Constructor<ArgumentDescriptor> constructor = ArgumentDescriptor.class.getDeclaredConstructor(BitSet.class, String[].class);
+        Constructor<ArgumentDescriptor> constructor = ArgumentDescriptor.class.getDeclaredConstructor(BitSet.class, MethodParameter[].class, Object.class, LogValuesDescriptor.class);
         constructor.setAccessible(true);
-        return constructor.newInstance(indexes, argumentNames);
+        return constructor.newInstance(indexes, methodParameters, instance, new LogValuesDescriptor(logResult, logThis));
     }
 }

@@ -13,7 +13,7 @@ final class MethodDescriptor {
     private volatile ArgumentDescriptor argumentDescriptor;
     private volatile ExceptionDescriptor exceptionDescriptor;
 
-    public MethodDescriptor(InvocationDescriptor invocationDescriptor) {
+    MethodDescriptor(InvocationDescriptor invocationDescriptor) {
         this.invocationDescriptor = invocationDescriptor;
     }
 

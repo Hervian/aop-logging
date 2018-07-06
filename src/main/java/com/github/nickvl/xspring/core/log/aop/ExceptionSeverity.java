@@ -9,19 +9,19 @@ package com.github.nickvl.xspring.core.log.aop;
  * A holder for a pair.
  */
 final class ExceptionSeverity {
-    private final Severity severity;
+    private final LogLevel severity;
     private final boolean stackTrace;
 
-    private ExceptionSeverity(Severity severity, boolean stackTrace) {
+    private ExceptionSeverity(LogLevel severity, boolean stackTrace) {
         this.severity = severity;
         this.stackTrace = stackTrace;
     }
 
-    public static ExceptionSeverity create(Severity severity, boolean stackTrace) {
+    public static ExceptionSeverity create(LogLevel severity, boolean stackTrace) {
         return new ExceptionSeverity(severity, stackTrace);
     }
 
-    public Severity getSeverity() {
+    public LogLevel getSeverity() {
         return severity;
     }
 

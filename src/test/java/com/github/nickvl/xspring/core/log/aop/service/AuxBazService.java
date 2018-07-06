@@ -6,6 +6,7 @@
 package com.github.nickvl.xspring.core.log.aop.service;
 
 import com.github.nickvl.xspring.core.log.aop.annotation.LogDebug;
+import com.github.nickvl.xspring.core.log.aop.annotation.Lp;
 
 /**
  * Implements {@link BazService}.
@@ -14,7 +15,7 @@ import com.github.nickvl.xspring.core.log.aop.annotation.LogDebug;
 public class AuxBazService extends AbstractBazService {
 
     @Override
-    public void inImpl(String xFirst, String xSecond) {
+    public void inImpl(@Lp String xFirst, @Lp String xSecond) {
         // nothing to do
     }
 }

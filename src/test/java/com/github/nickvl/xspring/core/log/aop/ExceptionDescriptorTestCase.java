@@ -48,7 +48,7 @@ public class ExceptionDescriptorTestCase {
         assertCollectionConsistOf(descriptor.getDefinedExceptions(), Exception.class);
 
         assertNull(descriptor.getExceptionSeverity(IllegalArgumentException.class));
-        assertReflectionEquals(ExceptionSeverity.create(Severity.ERROR, true), descriptor.getExceptionSeverity(Exception.class));
+        assertReflectionEquals(ExceptionSeverity.create(LogLevel.ERROR, true), descriptor.getExceptionSeverity(Exception.class));
     }
 
     @Test
@@ -61,11 +61,11 @@ public class ExceptionDescriptorTestCase {
                 RuntimeException.class, NoMoneyException.class, AccountBlockedException.class, AccountException.class, IllegalArgumentException.class);
 
         assertNull(descriptor.getExceptionSeverity(Exception.class));
-        assertReflectionEquals(ExceptionSeverity.create(Severity.ERROR, true), descriptor.getExceptionSeverity(RuntimeException.class));
-        assertReflectionEquals(ExceptionSeverity.create(Severity.INFO, false), descriptor.getExceptionSeverity(NoMoneyException.class));
-        assertReflectionEquals(ExceptionSeverity.create(Severity.INFO, false), descriptor.getExceptionSeverity(AccountBlockedException.class));
-        assertReflectionEquals(ExceptionSeverity.create(Severity.WARN, false), descriptor.getExceptionSeverity(AccountException.class));
-        assertReflectionEquals(ExceptionSeverity.create(Severity.WARN, true), descriptor.getExceptionSeverity(IllegalArgumentException.class));
+        assertReflectionEquals(ExceptionSeverity.create(LogLevel.ERROR, true), descriptor.getExceptionSeverity(RuntimeException.class));
+        assertReflectionEquals(ExceptionSeverity.create(LogLevel.INFO, false), descriptor.getExceptionSeverity(NoMoneyException.class));
+        assertReflectionEquals(ExceptionSeverity.create(LogLevel.INFO, false), descriptor.getExceptionSeverity(AccountBlockedException.class));
+        assertReflectionEquals(ExceptionSeverity.create(LogLevel.WARN, false), descriptor.getExceptionSeverity(AccountException.class));
+        assertReflectionEquals(ExceptionSeverity.create(LogLevel.WARN, true), descriptor.getExceptionSeverity(IllegalArgumentException.class));
     }
 
     @Test

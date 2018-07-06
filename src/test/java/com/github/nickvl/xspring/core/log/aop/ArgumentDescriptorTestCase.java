@@ -37,9 +37,9 @@ public class ArgumentDescriptorTestCase {
     @Test
     public void testNoArguments() throws Exception {
         Method method = getMethod(getClass(), "noArguments");
-        ArgumentDescriptor descriptor = new ArgumentDescriptor.Builder(method, method.getParameterTypes().length, parameterNameDiscoverer).build();
+        ArgumentDescriptor descriptor = new ArgumentDescriptor.Builder(method, method.getParameterTypes().length, parameterNameDiscoverer, this).build();
         assertEquals(-1, descriptor.nextArgumentIndex(0));
-        assertNull(descriptor.getNames());
+        assertNull(descriptor.getMethodParameters());
     }
 
     private void noArguments() {
@@ -49,29 +49,25 @@ public class ArgumentDescriptorTestCase {
     @Test
     public void testOneArgument() throws Exception {
         Method method = getMethod(getClass(), "oneArgument");
-        ArgumentDescriptor descriptor = new ArgumentDescriptor.Builder(method, method.getParameterTypes().length, parameterNameDiscoverer).build();
+        ArgumentDescriptor descriptor = new ArgumentDescriptor.Builder(method, method.getParameterTypes().length, parameterNameDiscoverer, this).build();
         assertEquals(0, descriptor.nextArgumentIndex(0));
         assertTrue(descriptor.isArgumentIndex(0));
         assertEquals(-1, descriptor.nextArgumentIndex(1));
-        if (descriptor.getNames() != null) {
-            assertArrayEquals(new String[]{"foo"}, descriptor.getNames());
-        }
+        assertEquals("String foo", descriptor.getMethodParameters()[0].toString());
     }
 
-    private void oneArgument(String foo) {
+    private void oneArgument(@Lp String foo) {
         // used in test methods viq reflection
     }
 
     @Test
     public void testTwoArguments() throws Exception {
         Method method = getMethod(getClass(), "twoArguments");
-        ArgumentDescriptor descriptor = new ArgumentDescriptor.Builder(method, method.getParameterTypes().length, parameterNameDiscoverer).build();
+        ArgumentDescriptor descriptor = new ArgumentDescriptor.Builder(method, method.getParameterTypes().length, parameterNameDiscoverer, this).build();
         assertEquals(0, descriptor.nextArgumentIndex(0));
         assertTrue(descriptor.isArgumentIndex(0));
         assertEquals(-1, descriptor.nextArgumentIndex(1));
-        if (descriptor.getNames() != null) {
-            assertArrayEquals(new String[]{"foo", "foo2"}, descriptor.getNames());
-        }
+        assertEquals("String foo", descriptor.getMethodParameters()[0].toString());
     }
 
     private void twoArguments(@Lp String foo, String foo2) {
@@ -82,15 +78,13 @@ public class ArgumentDescriptorTestCase {
     @Test
     public void testVarArguments() throws Exception {
         Method method = getMethod(getClass(), "varArguments");
-        ArgumentDescriptor descriptor = new ArgumentDescriptor.Builder(method, method.getParameterTypes().length, parameterNameDiscoverer).build();
+        ArgumentDescriptor descriptor = new ArgumentDescriptor.Builder(method, method.getParameterTypes().length, parameterNameDiscoverer, this).build();
         assertEquals(1, descriptor.nextArgumentIndex(0));
         assertFalse(descriptor.isArgumentIndex(0));
         assertTrue(descriptor.isArgumentIndex(1));
         assertEquals(1, descriptor.nextArgumentIndex(1));
         assertEquals(-1, descriptor.nextArgumentIndex(2));
-        if (descriptor.getNames() != null) {
-            assertArrayEquals(new String[]{"foo", "foo2"}, descriptor.getNames());
-        }
+        assertEquals("String[] foo2", descriptor.getMethodParameters()[1].toString());
     }
 
     private void varArguments(String foo, @Lp String... foo2) {

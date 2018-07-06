@@ -8,11 +8,34 @@ package com.github.nickvl.xspring.core.log.aop;
 /**
  * Log level severity enumeration in acceding order.
  */
-enum Severity {
+public enum LogLevel {
+    /**
+     * Trace logging.
+     */
     TRACE,
+
+    /**
+     * Debug logging.
+     */
     DEBUG,
+
+    /**
+     * Info logging.
+     */
     INFO,
+
+    /**
+     * Warn logging.
+     */
     WARN,
+
+    /**
+     * Error logging.
+     */
     ERROR,
+
+    /**
+     * Fatal logging.
+     */
     FATAL
 }

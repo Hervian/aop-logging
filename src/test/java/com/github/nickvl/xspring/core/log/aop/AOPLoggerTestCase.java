@@ -8,6 +8,8 @@ package com.github.nickvl.xspring.core.log.aop;
 import java.io.IOException;
 import java.util.Arrays;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
@@ -60,7 +62,7 @@ public class AOPLoggerTestCase {
         expectSimpleFooServiceLogger();
         Capture<ArgumentDescriptor> captured = new Capture<ArgumentDescriptor>();
         EasyMock.expect(logAdapter.toMessage(eq("voidMethodZero"), aryEq(new Object[]{}), capture(captured))).andReturn(">");
-        EasyMock.expect(logAdapter.toMessage(eq("voidMethodZero"), eq(0), eq(Void.TYPE))).andReturn("<");
+        EasyMock.expect(logAdapter.toMessage(eq("voidMethodZero"), eq(0), eq(Void.TYPE), capture(captured))).andReturn("<");
 
         EasyMock.expect(logger.isDebugEnabled()).andReturn(true);
         logger.debug(">");
@@ -84,7 +86,7 @@ public class AOPLoggerTestCase {
         expectSimpleFooServiceLogger();
         Capture<ArgumentDescriptor> captured = new Capture<ArgumentDescriptor>();
         EasyMock.expect(logAdapter.toMessage(eq("stringMethodTwo"), aryEq(new Object[]{"@1", "@2"}), capture(captured))).andReturn(">");
-        EasyMock.expect(logAdapter.toMessage(eq("stringMethodTwo"), eq(2), eq("stringMethodTwo:@1:@2"))).andReturn("<");
+        EasyMock.expect(logAdapter.toMessage(eq("stringMethodTwo"), eq(2), eq("stringMethodTwo:@1:@2"), capture(captured))).andReturn("<");
         EasyMock.expect(logger.isDebugEnabled()).andReturn(true);
         logger.debug(">");
         EasyMock.expect(logger.isDebugEnabled()).andReturn(true);
@@ -101,7 +103,7 @@ public class AOPLoggerTestCase {
         expectSimpleFooServiceLogger();
         Capture<ArgumentDescriptor> captured = new Capture<ArgumentDescriptor>();
         EasyMock.expect(logAdapter.toMessage(eq("stringMethodThree"), aryEq(new Object[]{"@1", "@2", "@3"}), capture(captured))).andReturn(">");
-        EasyMock.expect(logAdapter.toMessage(eq("stringMethodThree"), eq(3), eq("stringMethodThree:@1:@2:@3"))).andReturn("<");
+        EasyMock.expect(logAdapter.toMessage(eq("stringMethodThree"), eq(3), eq("stringMethodThree:@1:@2:@3"), capture(captured))).andReturn("<");
         EasyMock.expect(logger.isDebugEnabled()).andReturn(true);
         logger.debug(">");
         EasyMock.expect(logger.isDebugEnabled()).andReturn(true);
@@ -119,7 +121,7 @@ public class AOPLoggerTestCase {
         String[] secondArgValue = {"@2-1", "@2-2"};
         Capture<ArgumentDescriptor> captured = new Capture<ArgumentDescriptor>();
         EasyMock.expect(logAdapter.toMessage(eq("stringMethodTwoVarargs"), arrayEqual(new Object[]{"@1", new String[]{"@2-1", "@2-2"}}), capture(captured))).andReturn(">");
-        EasyMock.expect(logAdapter.toMessage(eq("stringMethodTwoVarargs"), eq(2), eq("stringMethodTwoVarargs:@1:" + Arrays.toString(secondArgValue)))).andReturn("<");
+        EasyMock.expect(logAdapter.toMessage(eq("stringMethodTwoVarargs"), eq(2), eq("stringMethodTwoVarargs:@1:" + Arrays.toString(secondArgValue)), capture(captured))).andReturn("<");
         EasyMock.expect(logger.isTraceEnabled()).andReturn(true);
         logger.trace(">");
         EasyMock.expect(logger.isTraceEnabled()).andReturn(true);
@@ -158,7 +160,12 @@ public class AOPLoggerTestCase {
     }
 
     private void assertParams(ArgumentDescriptor descriptor, String[] names, boolean... indexes) {
-        assertArrayEquals(names, descriptor.getNames());
+        if (names!=null) {
+            for (int i = 0; i < names.length; i++) {
+                assertEquals(names[i], descriptor.getMethodParameters()[i].getParameterName());
+            }
+        }
+
         for (int i = 0; i < indexes.length; i++) {
             assertEquals(indexes[i], descriptor.isArgumentIndex(i));
 

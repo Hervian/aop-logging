@@ -8,6 +8,7 @@ package com.github.nickvl.xspring.core.log.aop;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
+import com.github.nickvl.xspring.core.log.aop.annotation.LogAround;
 import com.github.nickvl.xspring.core.log.aop.annotation.LogDebug;
 import com.github.nickvl.xspring.core.log.aop.annotation.LogError;
 import com.github.nickvl.xspring.core.log.aop.annotation.LogException;
@@ -21,21 +22,21 @@ import com.github.nickvl.xspring.core.log.aop.annotation.LogWarn;
  * Method descriptor.
  */
 final class InvocationDescriptor {
-    private final Severity beforeSeverity;
-    private final Severity afterSeverity;
+    private final LogLevel beforeSeverity;
+    private final LogLevel afterSeverity;
     private final LogException exceptionAnnotation;
 
-    private InvocationDescriptor(Severity beforeSeverity, Severity afterSeverity, LogException exceptionAnnotation) {
+    private InvocationDescriptor(LogLevel beforeSeverity, LogLevel afterSeverity, LogException exceptionAnnotation) {
         this.beforeSeverity = beforeSeverity;
         this.afterSeverity = afterSeverity;
         this.exceptionAnnotation = exceptionAnnotation;
     }
 
-    public Severity getBeforeSeverity() {
+    public LogLevel getBeforeSeverity() {
         return beforeSeverity;
     }
 
-    public Severity getAfterSeverity() {
+    public LogLevel getAfterSeverity() {
         return afterSeverity;
     }
 
@@ -48,14 +49,14 @@ final class InvocationDescriptor {
      */
     public static final class Builder {
         private final Method method;
-        private Severity beforeSeverity;
-        private Severity afterSeverity;
-        private Severity defaultSeverity;
-        private Severity classBeforeSeverity;
-        private Severity classAfterSeverity;
-        private Severity classDefaultSeverity;
+        private LogLevel beforeSeverity;
+        private LogLevel afterSeverity;
+        private LogLevel defaultSeverity;
+        private LogLevel classBeforeSeverity;
+        private LogLevel classAfterSeverity;
+        private LogLevel classDefaultSeverity;
 
-        public Builder(Method method) {
+        Builder(Method method) {
             this.method = method;
         }
 
@@ -84,28 +85,31 @@ final class InvocationDescriptor {
                     logExceptionAnnotation = (LogException) currAnnotation;
                 } else if (currAnnotation.annotationType().equals(LogFatal.class)) {
                     LogFatal logAnnotation = (LogFatal) currAnnotation;
-                    setSeverity(logAnnotation.value(), Severity.FATAL, fromMethod);
+                    setSeverity(logAnnotation.value(), LogLevel.FATAL, fromMethod);
                 } else if (currAnnotation.annotationType().equals(LogError.class)) {
                     LogError logAnnotation = (LogError) currAnnotation;
-                    setSeverity(logAnnotation.value(), Severity.ERROR, fromMethod);
+                    setSeverity(logAnnotation.value(), LogLevel.ERROR, fromMethod);
                 } else if (currAnnotation.annotationType().equals(LogWarn.class)) {
                     LogWarn logAnnotation = (LogWarn) currAnnotation;
-                    setSeverity(logAnnotation.value(), Severity.WARN, fromMethod);
+                    setSeverity(logAnnotation.value(), LogLevel.WARN, fromMethod);
                 } else if (currAnnotation.annotationType().equals(LogInfo.class)) {
                     LogInfo logAnnotation = (LogInfo) currAnnotation;
-                    setSeverity(logAnnotation.value(), Severity.INFO, fromMethod);
+                    setSeverity(logAnnotation.value(), LogLevel.INFO, fromMethod);
                 } else if (currAnnotation.annotationType().equals(LogDebug.class)) {
                     LogDebug logAnnotation = (LogDebug) currAnnotation;
-                    setSeverity(logAnnotation.value(), Severity.DEBUG, fromMethod);
+                    setSeverity(logAnnotation.value(), LogLevel.DEBUG, fromMethod);
                 } else if (currAnnotation.annotationType().equals(LogTrace.class)) {
                     LogTrace logAnnotation = (LogTrace) currAnnotation;
-                    setSeverity(logAnnotation.value(), Severity.TRACE, fromMethod);
+                    setSeverity(logAnnotation.value(), LogLevel.TRACE, fromMethod);
+                } else if (currAnnotation.annotationType().equals(LogAround.class)) {
+                    LogAround logAnnotation = (LogAround) currAnnotation;
+                    setSeverity(LogAround.LOG_POINT, logAnnotation.value(), fromMethod);
                 }
             }
             return logExceptionAnnotation;
         }
 
-        private void setSeverity(LogPoint logPoint, Severity targetSeverity, boolean fromMethod) {
+        private void setSeverity(LogPoint logPoint, LogLevel targetSeverity, boolean fromMethod) {
             if (fromMethod) {
                 if (logPoint == LogPoint.IN) {
                     beforeSeverity = Utils.max(targetSeverity, beforeSeverity);

@@ -72,7 +72,9 @@ public class AOPLoggerInheritanceTestCase {
     }
 
     private void assertParams(ArgumentDescriptor descriptor, String[] names, boolean first, boolean second) {
-        assertArrayEquals(names, descriptor.getNames());
+        for (int i = 0; i < names.length; i++) {
+            assertEquals(names[i], descriptor.getMethodParameters()[i].getParameterName());
+        }
         assertEquals(first, descriptor.isArgumentIndex(0));
         assertEquals(second, descriptor.isArgumentIndex(1));
     }
@@ -89,7 +91,7 @@ public class AOPLoggerInheritanceTestCase {
         expectExtendedBarServiceLogger();
         Capture<ArgumentDescriptor> captured = new Capture<ArgumentDescriptor>();
         EasyMock.expect(logAdapter.toMessage(eq("inAbstract"), aryEq(PARAM_VALUE), capture(captured))).andReturn(">");
-        EasyMock.expect(logAdapter.toMessage("inAbstract", 2, Void.TYPE)).andReturn("<");
+        EasyMock.expect(logAdapter.toMessage(eq("inAbstract"), eq(2), eq(Void.TYPE), capture(captured))).andReturn("<");
 
         expectInfoLogging();
 
@@ -104,7 +106,7 @@ public class AOPLoggerInheritanceTestCase {
         expectExtendedBarServiceLogger();
         Capture<ArgumentDescriptor> captured = new Capture<ArgumentDescriptor>();
         EasyMock.expect(logAdapter.toMessage(eq("inExtended"), aryEq(PARAM_VALUE), capture(captured))).andReturn(">");
-        EasyMock.expect(logAdapter.toMessage("inExtended", 2, Void.TYPE)).andReturn("<");
+        EasyMock.expect(logAdapter.toMessage(eq("inExtended"), eq(2), eq(Void.TYPE), capture(captured))).andReturn("<");
 
         expectDebugLogging();
 
@@ -119,7 +121,7 @@ public class AOPLoggerInheritanceTestCase {
         expectExtendedBarServiceLogger();
         Capture<ArgumentDescriptor> captured = new Capture<ArgumentDescriptor>();
         EasyMock.expect(logAdapter.toMessage(eq("overridden"), aryEq(PARAM_VALUE), capture(captured))).andReturn(">");
-        EasyMock.expect(logAdapter.toMessage("overridden", 2, Void.TYPE)).andReturn("<");
+        EasyMock.expect(logAdapter.toMessage(eq("overridden"), eq(2), eq(Void.TYPE), capture(captured))).andReturn("<");
 
         expectDebugLogging();
 

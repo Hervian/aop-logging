@@ -7,6 +7,16 @@ generated-source
 *.versionsBackup
 *.orig
 
+#################
+## Eclipse
+#################
+*.classpath
+*.project
+*.settings
+*/target/**
+/target/
+/bin/**
+
 Thumbs.db
 desktop.ini
 

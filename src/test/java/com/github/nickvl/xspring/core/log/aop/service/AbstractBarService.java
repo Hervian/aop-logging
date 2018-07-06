@@ -15,7 +15,7 @@ public abstract class AbstractBarService implements BarService {
 
     @LogInfo
     @Override
-    public void inAbstract(String aFirst, String aSecond) {
+    public void inAbstract(@Lp String aFirst, @Lp String aSecond) {
         // do not override
     }
 

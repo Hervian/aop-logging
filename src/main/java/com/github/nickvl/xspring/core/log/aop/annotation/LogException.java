@@ -18,32 +18,32 @@ import java.lang.annotation.Target;
 @Logging
 public @interface LogException {
     /**
-     * Specifies which exceptions should be logged with fatal message level.
+     * @return Specifies which exceptions should be logged with fatal message level.
      */
     Exc[] fatal() default {};
 
     /**
-     * Specifies which exceptions should be logged with error message level.
+     * @return Specifies which exceptions should be logged with error message level.
      */
     Exc[] value() default @Exc(value = Exception.class, stacktrace = true);
 
     /**
-     * Specifies which exceptions should be logged with warn message level.
+     * @return Specifies which exceptions should be logged with warn message level.
      */
     Exc[] warn() default {};
 
     /**
-     * Specifies which exceptions should be logged with info message level.
+     * @return Specifies which exceptions should be logged with info message level.
      */
     Exc[] info() default {};
 
     /**
-     * Specifies which exceptions should be logged with debug message level.
+     * @return Specifies which exceptions should be logged with debug message level.
      */
     Exc[] debug() default {};
 
     /**
-     * Specifies which exceptions should be logged with trace message level.
+     * @return Specifies which exceptions should be logged with trace message level.
      */
     Exc[] trace() default {};
 
@@ -52,12 +52,12 @@ public @interface LogException {
      */
     public @interface Exc {
         /**
-         * Array of exceptions to log.
+         * @return Array of exceptions to log.
          */
         Class<? extends Exception>[] value();
 
         /**
-         * Flag if specified exceptions should be logged with stack trace.
+         * @return Flag if specified exceptions should be logged with stack trace.
          */
         boolean stacktrace() default false;
     }

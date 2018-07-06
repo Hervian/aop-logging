@@ -37,21 +37,21 @@ final class ExceptionDescriptor {
         private final LogException exceptionAnnotation;
         private final Map<Class<? extends Exception>, ExceptionSeverity> map = new HashMap<Class<? extends Exception>, ExceptionSeverity>();
 
-        public Builder(LogException exceptionAnnotation) {
+        Builder(LogException exceptionAnnotation) {
             this.exceptionAnnotation = exceptionAnnotation;
         }
 
         public ExceptionDescriptor build() {
-            setSeverity(exceptionAnnotation.fatal(), Severity.FATAL);
-            setSeverity(exceptionAnnotation.value(), Severity.ERROR);
-            setSeverity(exceptionAnnotation.warn(), Severity.WARN);
-            setSeverity(exceptionAnnotation.info(), Severity.INFO);
-            setSeverity(exceptionAnnotation.debug(), Severity.DEBUG);
-            setSeverity(exceptionAnnotation.trace(), Severity.TRACE);
+            setSeverity(exceptionAnnotation.fatal(), LogLevel.FATAL);
+            setSeverity(exceptionAnnotation.value(), LogLevel.ERROR);
+            setSeverity(exceptionAnnotation.warn(), LogLevel.WARN);
+            setSeverity(exceptionAnnotation.info(), LogLevel.INFO);
+            setSeverity(exceptionAnnotation.debug(), LogLevel.DEBUG);
+            setSeverity(exceptionAnnotation.trace(), LogLevel.TRACE);
             return new ExceptionDescriptor(map);
         }
 
-        private void setSeverity(LogException.Exc[] exceptionGroups, Severity targetSeverity) {
+        private void setSeverity(LogException.Exc[] exceptionGroups, LogLevel targetSeverity) {
             for (LogException.Exc exceptions : exceptionGroups) {
                 for (Class<? extends Exception> clazz : exceptions.value()) {
                     ExceptionSeverity descriptor = map.get(clazz);

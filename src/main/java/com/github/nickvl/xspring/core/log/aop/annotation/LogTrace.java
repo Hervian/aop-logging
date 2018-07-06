@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
 public @interface LogTrace {
 
     /**
-     * A part of the method to be logged. {@link LogPoint#BOTH} by default.
+     * @return A part of the method to be logged. {@link LogPoint#BOTH} by default.
      */
     LogPoint value() default LogPoint.BOTH;
 

@@ -8,9 +8,11 @@ package com.github.nickvl.xspring.core.log.aop;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.BitSet;
+import java.util.Optional;
 
 import org.springframework.core.ParameterNameDiscoverer;
 
+import com.github.nickvl.xspring.core.log.aop.annotation.LogAround;
 import com.github.nickvl.xspring.core.log.aop.annotation.Lp;
 
 /**
@@ -18,11 +20,15 @@ import com.github.nickvl.xspring.core.log.aop.annotation.Lp;
  */
 final class ArgumentDescriptor {
     private final BitSet loggedValueIndexes;
-    private final String[] names;
+    private final LogValuesDescriptor logValuesDescriptor;
+    private final MethodParameter[] methodParameters;
+    private final Optional<Object> instance;
 
-    private ArgumentDescriptor(BitSet loggedValueIndexes, String[] names) {
+    private ArgumentDescriptor(BitSet loggedValueIndexes, MethodParameter[] methodParameters, Object instance, LogValuesDescriptor logValuesDescriptor) {
         this.loggedValueIndexes = loggedValueIndexes;
-        this.names = names;
+        this.methodParameters = methodParameters;
+        this.logValuesDescriptor = logValuesDescriptor;
+        this.instance = Optional.ofNullable(instance);
     }
 
     public int nextArgumentIndex(int i) {
@@ -33,42 +39,68 @@ final class ArgumentDescriptor {
         return loggedValueIndexes.get(i);
     }
 
+    public boolean logResult() {
+        return logValuesDescriptor != null && logValuesDescriptor.isLogResult();
+    }
+
+    public boolean logThis() {
+        return logValuesDescriptor != null && logValuesDescriptor.isLogThis();
+    }
+
     /**
      * Gets names of method parameters.
      *
      * @return all parameter names or <code>null</code> if the method has no parameters or the names can not be discovered
      */
-    public String[] getNames() {
-        return names;
+    public MethodParameter[] getMethodParameters() {
+        return methodParameters;
+    }
+
+    public Optional<Object> getInstance() {
+        return instance;
     }
 
     /**
      * Builder.
      */
     public static final class Builder {
-        private static final ArgumentDescriptor NO_ARGUMENTS_DESCRIPTOR = new ArgumentDescriptor(new BitSet(0), null);
+        private static final ArgumentDescriptor NO_ARGUMENTS_DESCRIPTOR
+            = new ArgumentDescriptor(new BitSet(0), null, null, new LogValuesDescriptor());
         private final Method method;
         private final int argumentCount;
         private final ParameterNameDiscoverer parameterNameDiscoverer;
+        private final Object instance;
 
-        public Builder(Method method, int argumentCount, ParameterNameDiscoverer parameterNameDiscoverer) {
+        Builder(Method method, int argumentCount, ParameterNameDiscoverer parameterNameDiscoverer, Object instance) {
             this.method = method;
             this.argumentCount = argumentCount;
             this.parameterNameDiscoverer = parameterNameDiscoverer;
+            this.instance = instance;
         }
 
         public ArgumentDescriptor build() {
             if (argumentCount == 0) {
                 return NO_ARGUMENTS_DESCRIPTOR;
             }
-            String[] argNames = parameterNameDiscoverer.getParameterNames(method);
+
+            MethodParameter[] methodParameters = getArrayOfMethodParameters();
 
             BitSet lpParameters = getMethodParameters(Lp.class);
-            if (lpParameters.isEmpty()) {
-                lpParameters.set(0, argumentCount);
-            }
 
-            return new ArgumentDescriptor(lpParameters, argNames);
+            LogValuesDescriptor logValuesDescriptor = getParamsToLog();
+
+            return new ArgumentDescriptor(lpParameters, methodParameters, instance, logValuesDescriptor);
+        }
+
+        private MethodParameter[] getArrayOfMethodParameters() {
+            Class<?>[] parameterTypes = method.getParameterTypes();
+            String[] argNames = parameterNameDiscoverer.getParameterNames(method);
+
+            MethodParameter[] methodParameters = new MethodParameter[parameterTypes.length];
+            for (int i = 0; i < parameterTypes.length; i++) {
+                methodParameters[i] = new MethodParameter(parameterTypes[i].getSimpleName(), argNames == null ? null : argNames[i]);
+            }
+            return methodParameters;
         }
 
         private <T> BitSet getMethodParameters(Class<T> annotationMarker) {
@@ -83,6 +115,18 @@ final class ArgumentDescriptor {
                 }
             }
             return result;
+        }
+
+        private LogValuesDescriptor getParamsToLog() {
+            boolean logResult = false, logThis = false;
+            for (Annotation annotation: method.getAnnotations()) {
+                if (annotation.annotationType().equals(LogAround.class)) {
+                    LogAround logAnno = ((LogAround) annotation);
+                    logResult = logAnno.logResult();
+                    logThis = logAnno.logThis();
+                }
+            }
+            return new LogValuesDescriptor(logResult, logThis);
         }
 
     }

@@ -33,39 +33,56 @@ abstract class AbstractLogAdapter implements LogAdapter {
             return CALLING + method + "()";
         }
 
-        String[] names = argumentDescriptor.getNames();
-        StringBuilder buff = new StringBuilder(CALLING).append(method).append('(');
-        if (args.length > 1) {
-            buff.append(args.length).append(" arguments: ");
-        }
-        if (names == null) {
-            for (int i = 0; i < args.length; i++) {
-                if (argumentDescriptor.isArgumentIndex(i)) {
-                    buff.append(asString(args[i]));
-                    buff.append(", ");
-                } else {
-                    buff.append("?, ");
-                }
-            }
+        MethodParameter[] methodParameters = argumentDescriptor.getMethodParameters();
+        StringBuilder buff = new StringBuilder(CALLING);
+
+        //Construct signature and list of passed parameters, if any:
+        buff.append(method).append('(');
+        if (args.length < 1) {
+            buff.append(")");
         } else {
-            for (int i = argumentDescriptor.nextArgumentIndex(0); i >= 0; i = argumentDescriptor.nextArgumentIndex(i + 1)) {
-                buff.append(names[i]).append('=').append(asString(args[i]));
+            String[] arrayOfMethodParameterTypeAndNames = new String[methodParameters.length];
+            for (int i = 0; i < methodParameters.length; i++) {
+                arrayOfMethodParameterTypeAndNames[i] = methodParameters[i].toString();
+            }
+            buff.append(String.join(",", arrayOfMethodParameterTypeAndNames));
+            buff.append("): ");
+
+            //append the values of the parameters passed to the method:
+            for (int i = 0; i < args.length; i++) {
+                String parameterName = methodParameters[i].getParameterName();
+                if (parameterName != null && parameterName != "?") {
+                    buff.append(parameterName).append('=');
+                }
+                buff.append(argumentDescriptor.isArgumentIndex(i) ? asString(args[i]) : "?");
                 buff.append(", ");
             }
+
+            //Cut off the last ', ' which was added in last loop iteration
+            if (argumentDescriptor.nextArgumentIndex(0) != -1) {
+                buff.setLength(buff.length() - 2);
+            }
         }
-        if (argumentDescriptor.nextArgumentIndex(0) != -1) {
-            buff.setLength(buff.length() - 2);
+
+        if (argumentDescriptor.logThis() && argumentDescriptor.getInstance().isPresent()) {
+            Object thiz = argumentDescriptor.getInstance().get();
+            buff.append(", ").append(thiz.getClass().getSimpleName()).append(".this=").append(thiz);
         }
-        buff.append(')');
+
         return buff.toString();
     }
 
     @Override
-    public Object toMessage(String method, int argCount, Object result) {
+    public Object toMessage(String method, int argCount, Object result, ArgumentDescriptor argumentDescriptor) {
+        StringBuilder buff = new StringBuilder(RETURNING).append(method);
         if (argCount == 0) {
-            return RETURNING + method + "():" + asString(result);
+            return buff.append("():").append(returnValueAsString(argumentDescriptor, result)).toString();
         }
-        return RETURNING + method + '(' + argCount + " arguments):" + asString(result);
+        return buff.append('(').append(argCount).append(" arguments): ").append(returnValueAsString(argumentDescriptor, result)).toString();
+    }
+
+    private String returnValueAsString(ArgumentDescriptor argumentDescriptor, Object result) {
+        return argumentDescriptor.logResult() ? asString(result) : "?";
     }
 
     @Override

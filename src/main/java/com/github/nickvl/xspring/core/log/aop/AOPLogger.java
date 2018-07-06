@@ -29,20 +29,20 @@ import org.springframework.util.ReflectionUtils;
 public class AOPLogger implements InitializingBean {
     // private static final Log LOGGER = LogFactory.getLog(AOPLogger.class);
     private LogAdapter logAdapter;
-    private Map<Severity, LogStrategy> logStrategies;
+    private Map<LogLevel, LogStrategy> logStrategies;
     private final LocalVariableTableParameterNameDiscoverer localVariableNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
     private final ExceptionResolver exceptionResolver = new ExceptionResolver();
     private final ConcurrentMap<Method, MethodDescriptor> cache = new ConcurrentHashMap<Method, MethodDescriptor>();
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        logStrategies = new EnumMap<Severity, LogStrategy>(Severity.class);
-        logStrategies.put(Severity.FATAL, new LogStrategy.FatalLogStrategy(logAdapter));
-        logStrategies.put(Severity.ERROR, new LogStrategy.ErrorLogStrategy(logAdapter));
-        logStrategies.put(Severity.WARN, new LogStrategy.WarnLogStrategy(logAdapter));
-        logStrategies.put(Severity.INFO, new LogStrategy.InfoLogStrategy(logAdapter));
-        logStrategies.put(Severity.DEBUG, new LogStrategy.DebugLogStrategy(logAdapter));
-        logStrategies.put(Severity.TRACE, new LogStrategy.TraceLogStrategy(logAdapter));
+        logStrategies = new EnumMap<LogLevel, LogStrategy>(LogLevel.class);
+        logStrategies.put(LogLevel.FATAL, new LogStrategy.FatalLogStrategy(logAdapter));
+        logStrategies.put(LogLevel.ERROR, new LogStrategy.ErrorLogStrategy(logAdapter));
+        logStrategies.put(LogLevel.WARN, new LogStrategy.WarnLogStrategy(logAdapter));
+        logStrategies.put(LogLevel.INFO, new LogStrategy.InfoLogStrategy(logAdapter));
+        logStrategies.put(LogLevel.DEBUG, new LogStrategy.DebugLogStrategy(logAdapter));
+        logStrategies.put(LogLevel.TRACE, new LogStrategy.TraceLogStrategy(logAdapter));
     }
 
     public void setLogAdapter(LogAdapter log) {
@@ -69,8 +69,8 @@ public class AOPLogger implements InitializingBean {
 
         String methodName = method.getName();
 
+        ArgumentDescriptor argumentDescriptor = getArgumentDescriptor(descriptor, method, args.length, joinPoint.getThis());
         if (beforeLoggingOn(invocationDescriptor, logger)) {
-            ArgumentDescriptor argumentDescriptor = getArgumentDescriptor(descriptor, method, args.length);
             logStrategies.get(invocationDescriptor.getBeforeSeverity()).logBefore(logger, methodName, args, argumentDescriptor);
         }
 
@@ -94,7 +94,7 @@ public class AOPLogger implements InitializingBean {
         }
         if (afterLoggingOn(invocationDescriptor, logger)) {
             Object loggedResult = (method.getReturnType() == Void.TYPE) ? Void.TYPE : result;
-            logStrategies.get(invocationDescriptor.getAfterSeverity()).logAfter(logger, methodName, args.length, loggedResult);
+            logStrategies.get(invocationDescriptor.getAfterSeverity()).logAfter(logger, methodName, args.length, loggedResult, argumentDescriptor);
         }
         return result;
     }
@@ -109,11 +109,11 @@ public class AOPLogger implements InitializingBean {
         return prev == null ? cached : prev;
     }
 
-    private ArgumentDescriptor getArgumentDescriptor(MethodDescriptor descriptor, Method method, int argumentCount) {
+    private ArgumentDescriptor getArgumentDescriptor(MethodDescriptor descriptor, Method method, int argumentCount, Object instance) {
         if (descriptor.getArgumentDescriptor() != null) {
             return descriptor.getArgumentDescriptor();
         }
-        ArgumentDescriptor argumentDescriptor = new ArgumentDescriptor.Builder(method, argumentCount, localVariableNameDiscoverer).build();
+        ArgumentDescriptor argumentDescriptor = new ArgumentDescriptor.Builder(method, argumentCount, localVariableNameDiscoverer, instance).build();
         descriptor.setArgumentDescriptor(argumentDescriptor);
         return argumentDescriptor;
     }
@@ -147,7 +147,7 @@ public class AOPLogger implements InitializingBean {
         return isLoggingOn(descriptor.getAfterSeverity(), logger);
     }
 
-    private boolean isLoggingOn(Severity severity, Log logger) {
+    private boolean isLoggingOn(LogLevel severity, Log logger) {
         return severity != null && logStrategies.get(severity).isLogEnabled(logger);
     }
 }

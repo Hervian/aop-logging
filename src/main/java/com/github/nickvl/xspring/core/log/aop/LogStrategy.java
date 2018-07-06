@@ -48,7 +48,7 @@ abstract class LogStrategy {
      * @param argCount parameter count number of the method
      * @param result returned result of the method
      */
-    public abstract void logAfter(Log logger, String method, int argCount, Object result);
+    public abstract void logAfter(Log logger, String method, int argCount, Object result, ArgumentDescriptor argumentDescriptor);
 
     /**
      * Logs throwing exception from the method.
@@ -81,8 +81,8 @@ abstract class LogStrategy {
         }
 
         @Override
-        public void logAfter(Log logger, String method, int argCount, Object result) {
-            logger.fatal(getLogAdapter().toMessage(method, argCount, result));
+        public void logAfter(Log logger, String method, int argCount, Object result, ArgumentDescriptor argumentDescriptor) {
+            logger.fatal(getLogAdapter().toMessage(method, argCount, result, argumentDescriptor));
         }
 
         @Override
@@ -115,8 +115,8 @@ abstract class LogStrategy {
         }
 
         @Override
-        public void logAfter(Log logger, String method, int argCount, Object result) {
-            logger.error(getLogAdapter().toMessage(method, argCount, result));
+        public void logAfter(Log logger, String method, int argCount, Object result, ArgumentDescriptor argumentDescriptor) {
+            logger.error(getLogAdapter().toMessage(method, argCount, result, argumentDescriptor));
         }
 
         @Override
@@ -150,8 +150,8 @@ abstract class LogStrategy {
         }
 
         @Override
-        public void logAfter(Log logger, String method, int argCount, Object result) {
-            logger.warn(getLogAdapter().toMessage(method, argCount, result));
+        public void logAfter(Log logger, String method, int argCount, Object result, ArgumentDescriptor argumentDescriptor) {
+            logger.warn(getLogAdapter().toMessage(method, argCount, result, argumentDescriptor));
         }
 
         @Override
@@ -185,8 +185,8 @@ abstract class LogStrategy {
         }
 
         @Override
-        public void logAfter(Log logger, String method, int argCount, Object result) {
-            logger.info(getLogAdapter().toMessage(method, argCount, result));
+        public void logAfter(Log logger, String method, int argCount, Object result, ArgumentDescriptor argumentDescriptor) {
+            logger.info(getLogAdapter().toMessage(method, argCount, result, argumentDescriptor));
         }
 
         @Override
@@ -220,8 +220,8 @@ abstract class LogStrategy {
         }
 
         @Override
-        public void logAfter(Log logger, String method, int argCount, Object result) {
-            logger.debug(getLogAdapter().toMessage(method, argCount, result));
+        public void logAfter(Log logger, String method, int argCount, Object result, ArgumentDescriptor argumentDescriptor) {
+            logger.debug(getLogAdapter().toMessage(method, argCount, result, argumentDescriptor));
         }
 
         @Override
@@ -255,8 +255,8 @@ abstract class LogStrategy {
         }
 
         @Override
-        public void logAfter(Log logger, String method, int argCount, Object result) {
-            logger.trace(getLogAdapter().toMessage(method, argCount, result));
+        public void logAfter(Log logger, String method, int argCount, Object result, ArgumentDescriptor argumentDescriptor) {
+            logger.trace(getLogAdapter().toMessage(method, argCount, result, argumentDescriptor));
         }
 
         @Override

@@ -20,7 +20,7 @@ public class ExtendedBarService extends AbstractBarService {
 
     @LogDebug
     @Override
-    public void inExtended(String eFirst, String eSecond) {
+    public void inExtended(@Lp String eFirst, @Lp String eSecond) {
         // Log annotation here only
     }
 

@@ -56,7 +56,7 @@ public class InvocationDescriptorTestCase {
     @LogDebug(LogPoint.IN)
     public void testGetBeforeSeverity() throws Exception {
         InvocationDescriptor descriptor = new InvocationDescriptor.Builder(currMethod).build();
-        assertSame(Severity.DEBUG, descriptor.getBeforeSeverity());
+        assertSame(LogLevel.DEBUG, descriptor.getBeforeSeverity());
         assertNull(descriptor.getAfterSeverity());
         assertNull(descriptor.getExceptionAnnotation());
     }
@@ -66,7 +66,7 @@ public class InvocationDescriptorTestCase {
     @LogDebug(LogPoint.IN)
     public void testGetBeforeSeverityByPriority() throws Exception {
         InvocationDescriptor descriptor = new InvocationDescriptor.Builder(currMethod).build();
-        assertSame(Severity.INFO, descriptor.getBeforeSeverity());
+        assertSame(LogLevel.INFO, descriptor.getBeforeSeverity());
         assertNull(descriptor.getAfterSeverity());
         assertNull(descriptor.getExceptionAnnotation());
     }
@@ -75,7 +75,7 @@ public class InvocationDescriptorTestCase {
     @LogDebug(LogPoint.OUT)
     public void testGetAfterSeverity() throws Exception {
         InvocationDescriptor descriptor = new InvocationDescriptor.Builder(currMethod).build();
-        assertSame(Severity.DEBUG, descriptor.getAfterSeverity());
+        assertSame(LogLevel.DEBUG, descriptor.getAfterSeverity());
         assertNull(descriptor.getBeforeSeverity());
         assertNull(descriptor.getExceptionAnnotation());
     }
@@ -85,7 +85,7 @@ public class InvocationDescriptorTestCase {
     @LogDebug(LogPoint.OUT)
     public void testGetAfterSeverityByPriority() throws Exception {
         InvocationDescriptor descriptor = new InvocationDescriptor.Builder(currMethod).build();
-        assertSame(Severity.INFO, descriptor.getAfterSeverity());
+        assertSame(LogLevel.INFO, descriptor.getAfterSeverity());
         assertNull(descriptor.getBeforeSeverity());
         assertNull(descriptor.getExceptionAnnotation());
     }
@@ -94,8 +94,8 @@ public class InvocationDescriptorTestCase {
     @LogDebug
     public void testGetSeverity() throws Exception {
         InvocationDescriptor descriptor = new InvocationDescriptor.Builder(currMethod).build();
-        assertSame(Severity.DEBUG, descriptor.getBeforeSeverity());
-        assertSame(Severity.DEBUG, descriptor.getAfterSeverity());
+        assertSame(LogLevel.DEBUG, descriptor.getBeforeSeverity());
+        assertSame(LogLevel.DEBUG, descriptor.getAfterSeverity());
         assertNull(descriptor.getExceptionAnnotation());
     }
 
@@ -106,8 +106,8 @@ public class InvocationDescriptorTestCase {
     @LogTrace
     public void testGetSeverityByPriority() throws Exception {
         InvocationDescriptor descriptor = new InvocationDescriptor.Builder(currMethod).build();
-        assertSame(Severity.DEBUG, descriptor.getBeforeSeverity());
-        assertSame(Severity.INFO, descriptor.getAfterSeverity());
+        assertSame(LogLevel.DEBUG, descriptor.getBeforeSeverity());
+        assertSame(LogLevel.INFO, descriptor.getAfterSeverity());
         assertNull(descriptor.getExceptionAnnotation());
     }
 
@@ -125,8 +125,8 @@ public class InvocationDescriptorTestCase {
     @LogException
     public void testGetAll() throws Exception {
         InvocationDescriptor descriptor = new InvocationDescriptor.Builder(currMethod).build();
-        assertSame(Severity.INFO, descriptor.getBeforeSeverity());
-        assertSame(Severity.INFO, descriptor.getAfterSeverity());
+        assertSame(LogLevel.INFO, descriptor.getBeforeSeverity());
+        assertSame(LogLevel.INFO, descriptor.getAfterSeverity());
         assertNotNull(descriptor.getExceptionAnnotation());
     }
 }

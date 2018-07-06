@@ -11,7 +11,7 @@ import java.util.BitSet;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.github.nickvl.xspring.core.log.aop.TestSupportUtility.createArgumentDescriptor;
+import com.github.nickvl.xspring.core.log.aop.TestSupportUtility;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -44,78 +44,92 @@ public class AbstractLogAdapterTestCase {
 
     @Test
     public void testToMessageBeforeNoArgs() throws Exception {
-        ArgumentDescriptor descriptor = createArgumentDescriptor(new BitSet(), null);
+        BitSet indexesToLog = new BitSet();
+        indexesToLog.set(0);
+        ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(indexesToLog, null, false, false, this);
         Object message = logAdapter.toMessage("fooMethod", new Object[]{}, descriptor);
         assertEquals("calling: fooMethod()", message);
     }
 
     @Test
     public void testToMessageBeforeOneArg() throws Exception {
-        String[] arNames = {"first"};
-        ArgumentDescriptor descriptor = createArgumentDescriptor(arNames, true);
+        MethodParameter[] arNames = {new MethodParameter("String", "first")};
+        ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(arNames, this, true);
         Object message = logAdapter.toMessage("fooMethod", new Object[]{"v1"}, descriptor);
-        assertEquals("calling: fooMethod(first=v1)", message);
+        assertEquals("calling: fooMethod(String first): first=v1", message);
     }
 
     @Test
     public void testToMessageBeforeOneArgNoName() throws Exception {
-        ArgumentDescriptor descriptor = createArgumentDescriptor(null, true);
+        MethodParameter[] arNames = {new MethodParameter("String", "v1")};
+        ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(arNames, this, true);
         Object message = logAdapter.toMessage("fooMethod", new Object[]{"v1"}, descriptor);
-        assertEquals("calling: fooMethod(v1)", message);
+        assertEquals("calling: fooMethod(String v1): v1=v1", message);
     }
 
     @Test
     public void testToMessageBeforeSomeArgs() throws Exception {
-        String[] arNames = {"first", "second"};
-        ArgumentDescriptor descriptor = createArgumentDescriptor(arNames, false, true);
+        MethodParameter[] arNames = {new MethodParameter("String", "first"), new MethodParameter("String", "second")};
+        ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(arNames, this, false, true);
         Object message = logAdapter.toMessage("fooMethod", new Object[]{"v1", "v2"}, descriptor);
-        assertEquals("calling: fooMethod(2 arguments: second=v2)", message);
+//        assertEquals("calling: fooMethod(2 arguments: first=?, second=v2)", message);
+        assertEquals("calling: fooMethod(String first,String second): first=?, second=v2", message);
     }
 
     @Test
     public void testToMessageBeforeSomeArgsNoNames() throws Exception {
-        ArgumentDescriptor descriptor = createArgumentDescriptor(null, false, true);
+        MethodParameter[] arNames = {new MethodParameter("String", "v1"), new MethodParameter("String", "v2")};
+        ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(arNames, this, false, true);
         Object message = logAdapter.toMessage("fooMethod", new Object[]{"v1", "v2"}, descriptor);
-        assertEquals("calling: fooMethod(2 arguments: ?, v2)", message);
+//        assertEquals("calling: fooMethod(2 arguments: ?, v2)", message);
+        assertEquals("calling: fooMethod(String v1,String v2): v1=?, v2=v2", message);
     }
 
     @Test
     public void testToMessageBeforeAllArgs() throws Exception {
-        String[] arNames = {"first", "second"};
-        ArgumentDescriptor descriptor = createArgumentDescriptor(arNames, true, true);
+        MethodParameter[] arNames = {new MethodParameter("String", "first"), new MethodParameter("String", "second")};
+        ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(arNames, this, true, true);
         Object message = logAdapter.toMessage("fooMethod", new Object[]{"v1", "v2"}, descriptor);
-        assertEquals("calling: fooMethod(2 arguments: first=v1, second=v2)", message);
+//        assertEquals("calling: fooMethod(2 arguments: first=v1, second=v2)", message);
+        assertEquals("calling: fooMethod(String first,String second): first=v1, second=v2", message);
     }
 
     @Test
     public void testToMessageBeforeAllArgsNoNames() throws Exception {
-        ArgumentDescriptor descriptor = createArgumentDescriptor(null, true, true);
+        MethodParameter[] arNames = {new MethodParameter("String", "v1"), new MethodParameter("String", "v2")};
+        ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(arNames, this, true, true);
         Object message = logAdapter.toMessage("fooMethod", new Object[]{"v1", "v2"}, descriptor);
-        assertEquals("calling: fooMethod(2 arguments: v1, v2)", message);
+//        assertEquals("calling: fooMethod(2 arguments: v1, v2)", message);
+        assertEquals("calling: fooMethod(String v1,String v2): v1=v1, v2=v2", message);
     }
 
     @Test
     public void testToMessageAfterNoArgs() throws Exception {
-        Object message = logAdapter.toMessage("fooMethod", 0, "res");
+        ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(null, true, false, this, true, true);
+        Object message = logAdapter.toMessage("fooMethod", 0, "res", descriptor);
         assertEquals("returning: fooMethod():res", message);
     }
 
     @Test
     public void testToMessageAfterNoArgsVoid() throws Exception {
-        Object message = logAdapter.toMessage("fooMethod", 0, Void.TYPE);
+        ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(null, true, false, this, true, true);
+        Object message = logAdapter.toMessage("fooMethod", 0, Void.TYPE, descriptor);
         assertEquals("returning: fooMethod():void", message);
     }
 
     @Test
     public void testToMessageAfter() throws Exception {
-        Object message = logAdapter.toMessage("fooMethod", 2, "res");
-        assertEquals("returning: fooMethod(2 arguments):res", message);
+        MethodParameter[] arNames = {new MethodParameter("String", "res")};
+        ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(arNames, true, true, this, true);
+        Object message = logAdapter.toMessage("fooMethod", 2, "res", descriptor);
+        assertEquals("returning: fooMethod(2 arguments): res", message);
     }
 
     @Test
     public void testToMessageAfterVoid() throws Exception {
-        Object message = logAdapter.toMessage("fooMethod", 2, Void.TYPE);
-        assertEquals("returning: fooMethod(2 arguments):void", message);
+        ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(null, true, false, this, true, true);
+        Object message = logAdapter.toMessage("fooMethod", 2, Void.TYPE, descriptor);
+        assertEquals("returning: fooMethod(2 arguments): void", message);
     }
 
     @Test

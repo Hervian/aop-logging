@@ -8,20 +8,16 @@ package com.github.nickvl.xspring.core.log.aop.service;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.springframework.stereotype.Service;
-
 import com.github.nickvl.xspring.core.log.aop.annotation.LogDebug;
 import com.github.nickvl.xspring.core.log.aop.annotation.LogException;
+import com.github.nickvl.xspring.core.log.aop.annotation.LogException.Exc;
 import com.github.nickvl.xspring.core.log.aop.annotation.LogPoint;
 import com.github.nickvl.xspring.core.log.aop.annotation.LogTrace;
 import com.github.nickvl.xspring.core.log.aop.annotation.Lp;
 
-import static com.github.nickvl.xspring.core.log.aop.annotation.LogException.Exc;
-
 /**
  * Simple service, implementation of {@link FooService}.
  */
-@Service
 public class SimpleFooService implements FooService {
 
     @LogDebug(LogPoint.IN)
@@ -44,7 +40,7 @@ public class SimpleFooService implements FooService {
 
     @LogDebug
     @Override
-    public String stringMethodThree(String first, String second, String third) {
+    public String stringMethodThree(@Lp String first, @Lp String second, @Lp String third) {
         return "stringMethodThree:" + first + ":" + second + ":" + third;
     }
 
