@@ -13,13 +13,23 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.github.hervian.logging.MethodNamePrefix;
+import com.github.hervian.logging.ParameterStyle;
+
+import lombok.Builder;
+
 /**
  * Universal log adapter, capable to out parameter values by reflection.
  */
 public class UniversalLogAdapter extends AbstractLogAdapter {
-    private final Set<String> excludeFieldNames;
+    private Set<String> excludeFieldNames = null;
     private final int cropThreshold;
     private final boolean skipNullFields;
+
+  private static final String CALLING = "calling:";
+  private static final String RETURNING = "returning:";
+
+
 
     /**
      * Constructor.
@@ -30,10 +40,26 @@ public class UniversalLogAdapter extends AbstractLogAdapter {
      * @throws IllegalArgumentException if <code>cropThreshold </code> is negative
      */
     public UniversalLogAdapter(boolean skipNullFields, int cropThreshold, Set<String> excludeFieldNames) {
+        this(skipNullFields, cropThreshold, excludeFieldNames, null, null, null, null);
+    }
+
+    /**
+     *
+     * @param skipNullFields asdf
+     * @param cropThreshold asdf
+     * @param excludeFieldNames asdf
+     * @param methodNamePrefix asdf
+     * @param entryString asdf
+     * @param exitString asdf
+     * @param parameterStyle asdf
+     */
+    @Builder
+    public UniversalLogAdapter(boolean skipNullFields, int cropThreshold, Set<String> excludeFieldNames,
+            MethodNamePrefix methodNamePrefix, String entryString, String exitString,
+            ParameterStyle parameterStyle) {
+        super(methodNamePrefix == null ? MethodNamePrefix.SIMPLE_CLASS_NAME : methodNamePrefix, entryString,
+                exitString, parameterStyle);
         this.skipNullFields = skipNullFields;
-        if (cropThreshold < 0) {
-            throw new IllegalArgumentException("cropThreshold is negative: " + cropThreshold);
-        }
         this.cropThreshold = cropThreshold;
         this.excludeFieldNames = excludeFieldNames == null ? null : new HashSet<String>(excludeFieldNames);
     }
@@ -45,9 +71,7 @@ public class UniversalLogAdapter extends AbstractLogAdapter {
      * @param excludeFieldNames field names to exclude from building the string
      */
     public UniversalLogAdapter(boolean skipNullFields, Set<String> excludeFieldNames) {
-        this.skipNullFields = skipNullFields;
-        this.cropThreshold = -1;
-        this.excludeFieldNames = excludeFieldNames == null ? null : new HashSet<String>(excludeFieldNames);
+        this(skipNullFields, -1, excludeFieldNames);
     }
 
     @Override

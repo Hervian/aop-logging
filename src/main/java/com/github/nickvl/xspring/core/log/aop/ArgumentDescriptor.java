@@ -22,12 +22,14 @@ public final class ArgumentDescriptor {
     private final BitSet loggedValueIndexes;
     private final LogValuesDescriptor logValuesDescriptor;
     private final MethodParameter[] methodParameters;
+    private final Class<?> enclosingClass;
     private final Optional<Object> instance;
 
-    private ArgumentDescriptor(BitSet loggedValueIndexes, MethodParameter[] methodParameters, Object instance, LogValuesDescriptor logValuesDescriptor) {
+    private ArgumentDescriptor(BitSet loggedValueIndexes, MethodParameter[] methodParameters, Class<?> enclosingClass, Object instance, LogValuesDescriptor logValuesDescriptor) {
         this.loggedValueIndexes = loggedValueIndexes;
         this.methodParameters = methodParameters;
         this.logValuesDescriptor = logValuesDescriptor;
+        this.enclosingClass = enclosingClass;
         this.instance = Optional.ofNullable(instance);
     }
 
@@ -73,6 +75,10 @@ public final class ArgumentDescriptor {
         return methodParameters;
     }
 
+    public Class<?> getEnclosingClass() {
+        return enclosingClass;
+    }
+
     public Optional<Object> getInstance() {
         return instance;
     }
@@ -82,16 +88,18 @@ public final class ArgumentDescriptor {
      */
     public static final class Builder {
         private static final ArgumentDescriptor NO_ARGUMENTS_DESCRIPTOR
-            = new ArgumentDescriptor(new BitSet(0), null, null, new LogValuesDescriptor());
+            = new ArgumentDescriptor(new BitSet(0), null, null, null, new LogValuesDescriptor());
         private final Method method;
         private final int argumentCount;
         private final ParameterNameDiscoverer parameterNameDiscoverer;
         private final Object instance;
+        private final Class<?> enclosingClass;
 
-        Builder(Method method, int argumentCount, ParameterNameDiscoverer parameterNameDiscoverer, Object instance) {
+        Builder(Method method, int argumentCount, ParameterNameDiscoverer parameterNameDiscoverer, Class<?> enclosingClass, Object instance) {
             this.method = method;
             this.argumentCount = argumentCount;
             this.parameterNameDiscoverer = parameterNameDiscoverer;
+            this.enclosingClass = enclosingClass;
             this.instance = instance;
         }
 
@@ -110,7 +118,7 @@ public final class ArgumentDescriptor {
 
             LogValuesDescriptor logValuesDescriptor = getParamsToLog();
 
-            return new ArgumentDescriptor(lpParameters, methodParameters, instance, logValuesDescriptor);
+            return new ArgumentDescriptor(lpParameters, methodParameters, enclosingClass, instance, logValuesDescriptor);
         }
 
         private MethodParameter[] getArrayOfMethodParameters() {

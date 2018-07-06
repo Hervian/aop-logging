@@ -22,9 +22,12 @@ public class AbstractLogAdapterTestCase {
 
     private LogAdapter logAdapter;
 
+    private static final String CALLING = "calling:";
+    private static final String RETURNING = "returning:";
+
     @Before
     public void setUp() throws Exception {
-        logAdapter = new AbstractLogAdapter() {
+        logAdapter = new AbstractLogAdapter(null, CALLING, RETURNING, null) {
             @Override
             protected String asString(Object value) {
                 return String.valueOf(value);
@@ -56,7 +59,7 @@ public class AbstractLogAdapterTestCase {
         MethodParameter[] arNames = {new MethodParameter("String", "first")};
         ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(arNames, this, true);
         Object message = logAdapter.toMessage("fooMethod", new Object[]{"v1"}, descriptor);
-        assertEquals("calling: fooMethod(String first): first=v1", message);
+        assertEquals("calling: fooMethod(String first=v1)", message);
     }
 
     @Test
@@ -64,7 +67,7 @@ public class AbstractLogAdapterTestCase {
         MethodParameter[] arNames = {new MethodParameter("String", "v1")};
         ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(arNames, this, true);
         Object message = logAdapter.toMessage("fooMethod", new Object[]{"v1"}, descriptor);
-        assertEquals("calling: fooMethod(String v1): v1=v1", message);
+        assertEquals("calling: fooMethod(String v1=v1)", message);
     }
 
     @Test
@@ -72,8 +75,7 @@ public class AbstractLogAdapterTestCase {
         MethodParameter[] arNames = {new MethodParameter("String", "first"), new MethodParameter("String", "second")};
         ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(arNames, this, false, true);
         Object message = logAdapter.toMessage("fooMethod", new Object[]{"v1", "v2"}, descriptor);
-//        assertEquals("calling: fooMethod(2 arguments: first=?, second=v2)", message);
-        assertEquals("calling: fooMethod(String first,String second): first=?, second=v2", message);
+        assertEquals("calling: fooMethod(String first=?, String second=v2)", message);
     }
 
     @Test
@@ -81,8 +83,7 @@ public class AbstractLogAdapterTestCase {
         MethodParameter[] arNames = {new MethodParameter("String", "v1"), new MethodParameter("String", "v2")};
         ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(arNames, this, false, true);
         Object message = logAdapter.toMessage("fooMethod", new Object[]{"v1", "v2"}, descriptor);
-//        assertEquals("calling: fooMethod(2 arguments: ?, v2)", message);
-        assertEquals("calling: fooMethod(String v1,String v2): v1=?, v2=v2", message);
+        assertEquals("calling: fooMethod(String v1=?, String v2=v2)", message);
     }
 
     @Test
@@ -90,8 +91,7 @@ public class AbstractLogAdapterTestCase {
         MethodParameter[] arNames = {new MethodParameter("String", "first"), new MethodParameter("String", "second")};
         ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(arNames, this, true, true);
         Object message = logAdapter.toMessage("fooMethod", new Object[]{"v1", "v2"}, descriptor);
-//        assertEquals("calling: fooMethod(2 arguments: first=v1, second=v2)", message);
-        assertEquals("calling: fooMethod(String first,String second): first=v1, second=v2", message);
+        assertEquals("calling: fooMethod(String first=v1, String second=v2)", message);
     }
 
     @Test
@@ -99,8 +99,7 @@ public class AbstractLogAdapterTestCase {
         MethodParameter[] arNames = {new MethodParameter("String", "v1"), new MethodParameter("String", "v2")};
         ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(arNames, this, true, true);
         Object message = logAdapter.toMessage("fooMethod", new Object[]{"v1", "v2"}, descriptor);
-//        assertEquals("calling: fooMethod(2 arguments: v1, v2)", message);
-        assertEquals("calling: fooMethod(String v1,String v2): v1=v1, v2=v2", message);
+        assertEquals("calling: fooMethod(String v1=v1, String v2=v2)", message);
     }
 
     @Test

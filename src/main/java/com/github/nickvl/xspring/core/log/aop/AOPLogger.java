@@ -77,7 +77,7 @@ public class AOPLogger implements InitializingBean {
 
         String methodName = method.getName();
 
-        ArgumentDescriptor argumentDescriptor = getArgumentDescriptor(descriptor, method, args.length, joinPoint.getThis());
+        ArgumentDescriptor argumentDescriptor = getArgumentDescriptor(descriptor, method, args.length, joinPoint.getTarget().getClass(), joinPoint.getThis());
         if (beforeLoggingOn(invocationDescriptor, logger)) {
             genericLogger.logBefore(logger, methodName, args, argumentDescriptor, invocationDescriptor.getBeforeSeverity());
         }
@@ -117,11 +117,11 @@ public class AOPLogger implements InitializingBean {
         return prev == null ? cached : prev;
     }
 
-    private ArgumentDescriptor getArgumentDescriptor(MethodDescriptor descriptor, Method method, int argumentCount, Object instance) {
+    private ArgumentDescriptor getArgumentDescriptor(MethodDescriptor descriptor, Method method, int argumentCount, Class<?> enclosingClass, Object instance) {
         if (descriptor.getArgumentDescriptor() != null) {
             return descriptor.getArgumentDescriptor();
         }
-        ArgumentDescriptor argumentDescriptor = new ArgumentDescriptor.Builder(method, argumentCount, localVariableNameDiscoverer, instance).build();
+        ArgumentDescriptor argumentDescriptor = new ArgumentDescriptor.Builder(method, argumentCount, localVariableNameDiscoverer, enclosingClass, instance).build();
         descriptor.setArgumentDescriptor(argumentDescriptor);
         return argumentDescriptor;
     }

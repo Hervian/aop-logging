@@ -68,6 +68,11 @@ public class ConfigITCase {
 
     private static class AsString extends SimpleLogAdapter {
 
+        public AsString() {
+            super(null, null, null, null);
+            // TODO Auto-generated constructor stub
+        }
+
         @Override
         public String asString(Object value) {
             return super.asString(value);

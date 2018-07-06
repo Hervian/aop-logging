@@ -37,7 +37,7 @@ public class ArgumentDescriptorTestCase {
     @Test
     public void testNoArguments() throws Exception {
         Method method = getMethod(getClass(), "noArguments");
-        ArgumentDescriptor descriptor = new ArgumentDescriptor.Builder(method, method.getParameterTypes().length, parameterNameDiscoverer, this).build();
+        ArgumentDescriptor descriptor = new ArgumentDescriptor.Builder(method, method.getParameterTypes().length, parameterNameDiscoverer, ArgumentDescriptorTestCase.class, this).build();
         assertEquals(-1, descriptor.nextArgumentIndex(0));
         assertNull(descriptor.getMethodParameters());
     }
@@ -49,7 +49,7 @@ public class ArgumentDescriptorTestCase {
     @Test
     public void testOneArgument() throws Exception {
         Method method = getMethod(getClass(), "oneArgument");
-        ArgumentDescriptor descriptor = new ArgumentDescriptor.Builder(method, method.getParameterTypes().length, parameterNameDiscoverer, this).build();
+        ArgumentDescriptor descriptor = new ArgumentDescriptor.Builder(method, method.getParameterTypes().length, parameterNameDiscoverer, ArgumentDescriptorTestCase.class, this).build();
         assertEquals(0, descriptor.nextArgumentIndex(0));
         assertTrue(descriptor.isArgumentIndex(0));
         assertEquals(-1, descriptor.nextArgumentIndex(1));
@@ -63,7 +63,7 @@ public class ArgumentDescriptorTestCase {
     @Test
     public void testTwoArguments() throws Exception {
         Method method = getMethod(getClass(), "twoArguments");
-        ArgumentDescriptor descriptor = new ArgumentDescriptor.Builder(method, method.getParameterTypes().length, parameterNameDiscoverer, this).build();
+        ArgumentDescriptor descriptor = new ArgumentDescriptor.Builder(method, method.getParameterTypes().length, parameterNameDiscoverer, ArgumentDescriptorTestCase.class, this).build();
         assertEquals(0, descriptor.nextArgumentIndex(0));
         assertTrue(descriptor.isArgumentIndex(0));
         assertEquals(-1, descriptor.nextArgumentIndex(1));
@@ -78,7 +78,7 @@ public class ArgumentDescriptorTestCase {
     @Test
     public void testVarArguments() throws Exception {
         Method method = getMethod(getClass(), "varArguments");
-        ArgumentDescriptor descriptor = new ArgumentDescriptor.Builder(method, method.getParameterTypes().length, parameterNameDiscoverer, this).build();
+        ArgumentDescriptor descriptor = new ArgumentDescriptor.Builder(method, method.getParameterTypes().length, parameterNameDiscoverer, ArgumentDescriptorTestCase.class, this).build();
         assertEquals(1, descriptor.nextArgumentIndex(0));
         assertFalse(descriptor.isArgumentIndex(0));
         assertTrue(descriptor.isArgumentIndex(1));

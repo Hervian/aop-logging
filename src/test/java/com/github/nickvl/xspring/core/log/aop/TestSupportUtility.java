@@ -92,8 +92,8 @@ public final class TestSupportUtility {
             assertTrue(String.format("wrong arguments: argCount[%s] more then argNames[%s]", indexes, Arrays.toString(methodParameters)),
                     indexes.length() <= methodParameters.length);
         }
-        Constructor<ArgumentDescriptor> constructor = ArgumentDescriptor.class.getDeclaredConstructor(BitSet.class, MethodParameter[].class, Object.class, LogValuesDescriptor.class);
+        Constructor<ArgumentDescriptor> constructor = ArgumentDescriptor.class.getDeclaredConstructor(BitSet.class, MethodParameter[].class, Class.class, Object.class, LogValuesDescriptor.class);
         constructor.setAccessible(true);
-        return constructor.newInstance(indexes, methodParameters, instance, new LogValuesDescriptor(logResult, logThis));
+        return constructor.newInstance(indexes, methodParameters, instance==null ? Object.class : instance.getClass(), instance, new LogValuesDescriptor(logResult, logThis));
     }
 }
