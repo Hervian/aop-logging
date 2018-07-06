@@ -7,8 +7,6 @@ package com.github.nickvl.xspring.core.log.aop;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -21,6 +19,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.util.ReflectionUtils;
 
+import com.github.hervian.logging.Logger;
+
 
 /**
  * Logger aspect.
@@ -29,25 +29,33 @@ import org.springframework.util.ReflectionUtils;
 public class AOPLogger implements InitializingBean {
     // private static final Log LOGGER = LogFactory.getLog(AOPLogger.class);
     private LogAdapter logAdapter;
-    private Map<LogLevel, LogStrategy> logStrategies;
+    private Logger genericLogger;
     private final LocalVariableTableParameterNameDiscoverer localVariableNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
     private final ExceptionResolver exceptionResolver = new ExceptionResolver();
     private final ConcurrentMap<Method, MethodDescriptor> cache = new ConcurrentHashMap<Method, MethodDescriptor>();
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        logStrategies = new EnumMap<LogLevel, LogStrategy>(LogLevel.class);
-        logStrategies.put(LogLevel.FATAL, new LogStrategy.FatalLogStrategy(logAdapter));
-        logStrategies.put(LogLevel.ERROR, new LogStrategy.ErrorLogStrategy(logAdapter));
-        logStrategies.put(LogLevel.WARN, new LogStrategy.WarnLogStrategy(logAdapter));
-        logStrategies.put(LogLevel.INFO, new LogStrategy.InfoLogStrategy(logAdapter));
-        logStrategies.put(LogLevel.DEBUG, new LogStrategy.DebugLogStrategy(logAdapter));
-        logStrategies.put(LogLevel.TRACE, new LogStrategy.TraceLogStrategy(logAdapter));
     }
 
-    public void setLogAdapter(LogAdapter log) {
-        this.logAdapter = log;
+//    /**
+//     *
+//     * @param logAdapter constructor
+//     */
+//    public AOPLogger(LogAdapter logAdapter) {
+//        this.logAdapter = logAdapter;
+//
+//    }
+
+    /**
+     *
+     * @param logAdapter asdf
+     */
+    public void setLogAdapter(LogAdapter logAdapter) {
+        this.logAdapter = logAdapter;
+        genericLogger = new Logger(logAdapter);
     }
+
 
     /**
      * Advise. Logs the advised method.
@@ -71,7 +79,7 @@ public class AOPLogger implements InitializingBean {
 
         ArgumentDescriptor argumentDescriptor = getArgumentDescriptor(descriptor, method, args.length, joinPoint.getThis());
         if (beforeLoggingOn(invocationDescriptor, logger)) {
-            logStrategies.get(invocationDescriptor.getBeforeSeverity()).logBefore(logger, methodName, args, argumentDescriptor);
+            genericLogger.logBefore(logger, methodName, args, argumentDescriptor, invocationDescriptor.getBeforeSeverity());
         }
 
         Object result;
@@ -86,7 +94,7 @@ public class AOPLogger implements InitializingBean {
                 if (resolved != null) {
                     ExceptionSeverity excSeverity = exceptionDescriptor.getExceptionSeverity(resolved);
                     if (isLoggingOn(excSeverity.getSeverity(), logger)) {
-                        logStrategies.get(excSeverity.getSeverity()).logException(logger, methodName, args.length, e, excSeverity.getStackTrace());
+                        genericLogger.logException(logger, methodName, args.length, e, excSeverity.getStackTrace(), excSeverity.getSeverity());
                     }
                 }
                 throw e;
@@ -94,7 +102,7 @@ public class AOPLogger implements InitializingBean {
         }
         if (afterLoggingOn(invocationDescriptor, logger)) {
             Object loggedResult = (method.getReturnType() == Void.TYPE) ? Void.TYPE : result;
-            logStrategies.get(invocationDescriptor.getAfterSeverity()).logAfter(logger, methodName, args.length, loggedResult, argumentDescriptor);
+            genericLogger.logAfter(logger, methodName, args.length, loggedResult, argumentDescriptor, invocationDescriptor.getAfterSeverity());
         }
         return result;
     }
@@ -148,6 +156,6 @@ public class AOPLogger implements InitializingBean {
     }
 
     private boolean isLoggingOn(LogLevel severity, Log logger) {
-        return severity != null && logStrategies.get(severity).isLogEnabled(logger);
+        return severity != null && genericLogger.isLogEnabled(logger, severity);
     }
 }

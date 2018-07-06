@@ -18,7 +18,7 @@ import com.github.nickvl.xspring.core.log.aop.annotation.Lp;
 /**
  * Method arguments descriptor.
  */
-final class ArgumentDescriptor {
+public final class ArgumentDescriptor {
     private final BitSet loggedValueIndexes;
     private final LogValuesDescriptor logValuesDescriptor;
     private final MethodParameter[] methodParameters;
@@ -31,18 +31,35 @@ final class ArgumentDescriptor {
         this.instance = Optional.ofNullable(instance);
     }
 
+    /**
+     *
+     * @param i the index into the list of method parameters.
+     * @return the next index of the method arguments to be logged.
+     */
     public int nextArgumentIndex(int i) {
         return loggedValueIndexes.nextSetBit(i);
     }
 
+    /**
+     * @param i the index into the list of method parameters.
+     * @return awhether or not this method argument should be logged.
+     */
     public boolean isArgumentIndex(int i) {
         return loggedValueIndexes.get(i);
     }
 
+    /**
+     *
+     * @return whether or not the method's return value should be logged.
+     */
     public boolean logResult() {
         return logValuesDescriptor != null && logValuesDescriptor.isLogResult();
     }
 
+    /**
+     *
+     * @return whether or not the instance should be logged.
+     */
     public boolean logThis() {
         return logValuesDescriptor != null && logValuesDescriptor.isLogThis();
     }
@@ -78,6 +95,10 @@ final class ArgumentDescriptor {
             this.instance = instance;
         }
 
+        /**
+         *
+         * @return constructor
+         */
         public ArgumentDescriptor build() {
             if (argumentCount == 0) {
                 return NO_ARGUMENTS_DESCRIPTOR;

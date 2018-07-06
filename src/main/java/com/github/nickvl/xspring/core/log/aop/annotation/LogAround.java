@@ -19,7 +19,7 @@ import com.github.nickvl.xspring.core.log.aop.LogLevel;
 public @interface LogAround {
 
     /**
-     * An enum value indicating that we a log statement should be created for both entering and exiting the method.
+     * An enum value indicating that a log statement should be created for both entering and exiting the method.
      */
     LogPoint LOG_POINT = LogPoint.BOTH;
 
