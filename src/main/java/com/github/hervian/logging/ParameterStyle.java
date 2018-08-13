@@ -14,15 +14,15 @@ public enum ParameterStyle {
 
     /**
      * A configuration that can be passed to the {@link com.github.nickvl.xspring.core.log.aop.LogAdapter} which will result in log entering statements,
-     * wherein the method parameters are presented as a comma separated list of: 'myObject=someValue'.
+     * wherein the method parameters are presented as a comma separated list of: 'MyObject myObject=someValue'.
      */
     NAME_VALUE,
 
     /**
      * A configuration that can be passed to the {@link com.github.nickvl.xspring.core.log.aop.LogAdapter} which will result in log entering statements,
-     * wherein the method parameters are presented as a comma separated list of: 'MyObject=someValue'.
+     * wherein the method parameters are presented as a comma separated list of: 'MyObject'.
      */
-    TYPE_VALUE,
+    TYPE,
 
     /**
      * A configuration that can be passed to the {@link com.github.nickvl.xspring.core.log.aop.LogAdapter} which will result in log entering statements,

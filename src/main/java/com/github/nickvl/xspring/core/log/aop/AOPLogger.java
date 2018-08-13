@@ -102,7 +102,7 @@ public class AOPLogger implements InitializingBean {
         }
         if (afterLoggingOn(invocationDescriptor, logger)) {
             Object loggedResult = (method.getReturnType() == Void.TYPE) ? Void.TYPE : result;
-            genericLogger.logAfter(logger, methodName, args.length, loggedResult, argumentDescriptor, invocationDescriptor.getAfterSeverity());
+            genericLogger.logAfter(logger, methodName, args, loggedResult, argumentDescriptor, invocationDescriptor.getAfterSeverity());
         }
         return result;
     }

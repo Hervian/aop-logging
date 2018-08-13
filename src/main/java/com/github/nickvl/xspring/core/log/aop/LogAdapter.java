@@ -37,12 +37,12 @@ public interface LogAdapter {
     /**
      *
      * @param method asdf
-     * @param argCount asdf
+     * @param args asdf
      * @param result asdf
      * @param argumentDescriptor asdf
      * @return asdf
      */
-    Object toMessage(String method, int argCount, Object result, ArgumentDescriptor argumentDescriptor);
+    Object toMessage(String method, Object[] args, Object result, ArgumentDescriptor argumentDescriptor);
 
     /**
      *

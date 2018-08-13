@@ -13,7 +13,9 @@ import com.github.nickvl.xspring.core.log.aop.annotation.LogDebug;
 import com.github.nickvl.xspring.core.log.aop.annotation.LogError;
 import com.github.nickvl.xspring.core.log.aop.annotation.LogException;
 import com.github.nickvl.xspring.core.log.aop.annotation.LogFatal;
+import com.github.nickvl.xspring.core.log.aop.annotation.LogIn;
 import com.github.nickvl.xspring.core.log.aop.annotation.LogInfo;
+import com.github.nickvl.xspring.core.log.aop.annotation.LogOut;
 import com.github.nickvl.xspring.core.log.aop.annotation.LogPoint;
 import com.github.nickvl.xspring.core.log.aop.annotation.LogTrace;
 import com.github.nickvl.xspring.core.log.aop.annotation.LogWarn;
@@ -104,6 +106,12 @@ final class InvocationDescriptor {
                 } else if (currAnnotation.annotationType().equals(LogAround.class)) {
                     LogAround logAnnotation = (LogAround) currAnnotation;
                     setSeverity(LogAround.LOG_POINT, logAnnotation.value(), fromMethod);
+                } else if (currAnnotation.annotationType().equals(LogIn.class)) {
+                    LogIn logAnnotation = (LogIn) currAnnotation;
+                    setSeverity(LogIn.LOG_POINT, logAnnotation.value(), fromMethod);
+                } else if (currAnnotation.annotationType().equals(LogOut.class)) {
+                    LogOut logAnnotation = (LogOut) currAnnotation;
+                    setSeverity(LogOut.LOG_POINT, logAnnotation.value(), fromMethod);
                 }
             }
             return logExceptionAnnotation;

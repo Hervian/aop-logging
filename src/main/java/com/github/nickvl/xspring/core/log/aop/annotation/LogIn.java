@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 import com.github.nickvl.xspring.core.log.aop.LogLevel;
 
 /**
- * An annotation which will cause log statements for both entering and exiting the method.
+ * An annotation which will cause log statement for entering the method.
  * Notice that the default log level is INFO, but that the level can be set per annotation. See {@link #value()}}
  * @author m83522
  *
@@ -16,12 +16,12 @@ import com.github.nickvl.xspring.core.log.aop.LogLevel;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 @Logging
-public @interface LogAround {
+public @interface LogIn {
 
     /**
      * A constant used internally by the framework to indicate that a log statement should be created for both entering and exiting the annotated method.
      */
-    LogPoint LOG_POINT = LogPoint.BOTH;
+    LogPoint LOG_POINT = LogPoint.IN;
 
     /**
      *
@@ -35,15 +35,5 @@ public @interface LogAround {
      * Notice that this annotation type will have no effect if the method annotated is static.
      */
     boolean logThis() default false;
-
-    /**
-     *
-     * Whether or not to include the content of the return value,
-     * i.e. if the value of the method's return variable should be included in the log.
-     * @return Whether or not to include the content of the return value,
-     * i.e. if the value of the method's return variable should be included in the log.
-     */
-    boolean logResult() default false;
-
 
 }

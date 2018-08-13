@@ -60,19 +60,16 @@ abstract class AbstractLogAdapter implements LogAdapter {
     @Override
     public Object toMessage(String method, Object[] args, ArgumentDescriptor argumentDescriptor) {
         StringBuilder buff = new StringBuilder(entryString).append(' ');
-        switch (methodNamePrefix) {
-        case FULLY_QUALIFIED_CLASS_NAME:
-            buff.append(argumentDescriptor.getEnclosingClass().getName()).append('.');
-            break;
-        case NONE:
-            break;
-        case SIMPLE_CLASS_NAME:
-            buff.append(argumentDescriptor.getEnclosingClass().getSimpleName()).append('.');
-            break;
-        default:
-            break;
+        logMethodNameAndParameters(method, args, argumentDescriptor, buff);
 
-        }
+        logThis(argumentDescriptor, buff);
+
+        return buff.toString();
+    }
+
+    private void logMethodNameAndParameters(String method, Object[] args, ArgumentDescriptor argumentDescriptor,
+            StringBuilder buff) {
+        addMethodName(argumentDescriptor, buff);
         buff.append(method).append('(');
 
         MethodParameter[] methodParameters = argumentDescriptor.getMethodParameters();
@@ -88,21 +85,42 @@ abstract class AbstractLogAdapter implements LogAdapter {
             buff.setLength(buff.length() - 2);
         }
         buff.append(")");
+    }
 
+    private void logThis(ArgumentDescriptor argumentDescriptor, StringBuilder buff) {
         if (argumentDescriptor.logThis() && argumentDescriptor.getInstance().isPresent()) {
             Object thiz = argumentDescriptor.getInstance().get();
             buff.append(", ").append(thiz.getClass().getSimpleName()).append(".this=").append(thiz);
         }
+    }
 
-        return buff.toString();
+    private void addMethodName(ArgumentDescriptor argumentDescriptor, StringBuilder buff) {
+        switch (methodNamePrefix) {
+        case FULLY_QUALIFIED_CLASS_NAME:
+            buff.append(argumentDescriptor.getEnclosingClass().getName()).append('.');
+            break;
+        case NONE:
+            break;
+        case SIMPLE_CLASS_NAME:
+            buff.append(argumentDescriptor.getEnclosingClass().getSimpleName()).append('.');
+            break;
+        default:
+            break;
+
+        }
     }
 
     private void appendParametersToEntryMethodString(Object[] args, ArgumentDescriptor argumentDescriptor,
             StringBuilder buff, MethodParameter[] methodParameters, String[] arrayOfMethodParameterTypeAndNames) {
+        appendParametersToEntryMethodString(args, argumentDescriptor, buff, methodParameters,
+                arrayOfMethodParameterTypeAndNames, parameterStyle);
+    }
+
+    private void appendParametersToEntryMethodString(Object[] args, ArgumentDescriptor argumentDescriptor,
+            StringBuilder buff, MethodParameter[] methodParameters, String[] arrayOfMethodParameterTypeAndNames, ParameterStyle passedParameterStyle) {
         for (int i = 0; i < methodParameters.length; i++) {
             MethodParameter methodParameter = methodParameters[i];
-            ParameterStyle localParameterStyle = parameterStyle;
-
+            ParameterStyle localParameterStyle = passedParameterStyle;
             do { // http://clav.cz/java-switch-with-goto-case/
                 switch (localParameterStyle) {
                 case TYPE_NAME_VALUE:
@@ -113,7 +131,7 @@ abstract class AbstractLogAdapter implements LogAdapter {
                     buff.append(methodParameter.getParameterName()).append("=");
                     localParameterStyle = ParameterStyle.VALUE;
                     continue;
-                case TYPE_VALUE:
+                case TYPE:
                     buff.append(methodParameter.getParameterType());
                     break;
                 case VALUE:
@@ -129,12 +147,17 @@ abstract class AbstractLogAdapter implements LogAdapter {
     }
 
     @Override
-    public Object toMessage(String method, int argCount, Object result, ArgumentDescriptor argumentDescriptor) {
-        StringBuilder buff = new StringBuilder(exitString).append(' ').append(method);
-        if (argCount == 0) {
-            return buff.append("():").append(returnValueAsString(argumentDescriptor, result)).toString();
-        }
-        return buff.append('(').append(argCount).append(" arguments): ").append(returnValueAsString(argumentDescriptor, result)).toString();
+    public Object toMessage(String method, Object[] args, Object result, ArgumentDescriptor argumentDescriptor) {
+//        StringBuilder buff = new StringBuilder(exitString).append(' ').append(method);
+        StringBuilder buff = new StringBuilder(exitString).append(' ');
+        logMethodNameAndParameters(method, args, argumentDescriptor, buff);
+
+        buff.append(": ").append(returnValueAsString(argumentDescriptor, result));
+
+        logThis(argumentDescriptor, buff);
+
+        return buff.toString();
+//        return buff.append('(').append(argCount).append(" arguments): ").append(returnValueAsString(argumentDescriptor, result)).toString();
     }
 
     private String returnValueAsString(ArgumentDescriptor argumentDescriptor, Object result) {

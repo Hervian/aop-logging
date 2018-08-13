@@ -91,7 +91,7 @@ public class AOPLoggerInheritanceTestCase {
         expectExtendedBarServiceLogger();
         Capture<ArgumentDescriptor> captured = new Capture<ArgumentDescriptor>();
         EasyMock.expect(logAdapter.toMessage(eq("inAbstract"), aryEq(PARAM_VALUE), capture(captured))).andReturn(">");
-        EasyMock.expect(logAdapter.toMessage(eq("inAbstract"), eq(2), eq(Void.TYPE), capture(captured))).andReturn("<");
+        EasyMock.expect(logAdapter.toMessage(eq("inAbstract"), aryEq(PARAM_VALUE), eq(Void.TYPE), capture(captured))).andReturn("<");
 
         expectInfoLogging();
 
@@ -106,7 +106,7 @@ public class AOPLoggerInheritanceTestCase {
         expectExtendedBarServiceLogger();
         Capture<ArgumentDescriptor> captured = new Capture<ArgumentDescriptor>();
         EasyMock.expect(logAdapter.toMessage(eq("inExtended"), aryEq(PARAM_VALUE), capture(captured))).andReturn(">");
-        EasyMock.expect(logAdapter.toMessage(eq("inExtended"), eq(2), eq(Void.TYPE), capture(captured))).andReturn("<");
+        EasyMock.expect(logAdapter.toMessage(eq("inExtended"), aryEq(PARAM_VALUE), eq(Void.TYPE), capture(captured))).andReturn("<");
 
         expectDebugLogging();
 
@@ -121,7 +121,7 @@ public class AOPLoggerInheritanceTestCase {
         expectExtendedBarServiceLogger();
         Capture<ArgumentDescriptor> captured = new Capture<ArgumentDescriptor>();
         EasyMock.expect(logAdapter.toMessage(eq("overridden"), aryEq(PARAM_VALUE), capture(captured))).andReturn(">");
-        EasyMock.expect(logAdapter.toMessage(eq("overridden"), eq(2), eq(Void.TYPE), capture(captured))).andReturn("<");
+        EasyMock.expect(logAdapter.toMessage(eq("overridden"), aryEq(PARAM_VALUE), eq(Void.TYPE), capture(captured))).andReturn("<");
 
         expectDebugLogging();
 

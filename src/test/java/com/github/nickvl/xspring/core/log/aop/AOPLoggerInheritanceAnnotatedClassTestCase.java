@@ -68,7 +68,7 @@ public class AOPLoggerInheritanceAnnotatedClassTestCase {
         expectSimpleBarServiceLogger(GeneralBazService.class);
         Capture<ArgumentDescriptor> captured = new Capture<ArgumentDescriptor>();
         EasyMock.expect(logAdapter.toMessage(eq("inImpl"), aryEq(PARAM_VALUE), capture(captured))).andReturn(">");
-        EasyMock.expect(logAdapter.toMessage(eq("inImpl"), eq(2), eq(Void.TYPE), capture(captured))).andReturn("<");
+        EasyMock.expect(logAdapter.toMessage(eq("inImpl"), aryEq(PARAM_VALUE), eq(Void.TYPE), capture(captured))).andReturn("<");
 
         expectInfoLogging();
 
@@ -90,7 +90,7 @@ public class AOPLoggerInheritanceAnnotatedClassTestCase {
         expectSimpleBarServiceLogger(AuxBazService.class);
         Capture<ArgumentDescriptor> captured = new Capture<ArgumentDescriptor>();
         EasyMock.expect(logAdapter.toMessage(eq("inImpl"), aryEq(PARAM_VALUE), capture(captured))).andReturn(">");
-        EasyMock.expect(logAdapter.toMessage(eq("inImpl"), eq(2), eq(Void.TYPE), capture(captured))).andReturn("<");
+        EasyMock.expect(logAdapter.toMessage(eq("inImpl"), aryEq(PARAM_VALUE), eq(Void.TYPE), capture(captured))).andReturn("<");
 
         expectDebugLogging();
 

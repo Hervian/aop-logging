@@ -13,6 +13,8 @@ import java.util.Optional;
 import org.springframework.core.ParameterNameDiscoverer;
 
 import com.github.nickvl.xspring.core.log.aop.annotation.LogAround;
+import com.github.nickvl.xspring.core.log.aop.annotation.LogIn;
+import com.github.nickvl.xspring.core.log.aop.annotation.LogOut;
 import com.github.nickvl.xspring.core.log.aop.annotation.Lp;
 
 /**
@@ -147,6 +149,15 @@ public final class ArgumentDescriptor {
             for (Annotation annotation: method.getAnnotations()) {
                 if (annotation.annotationType().equals(LogAround.class)) {
                     LogAround logAnno = ((LogAround) annotation);
+                    logResult = logAnno.logResult();
+                    logThis = logAnno.logThis();
+                }
+                if (annotation.annotationType().equals(LogIn.class)) {
+                    LogIn logAnno = ((LogIn) annotation);
+                    logThis = logAnno.logThis();
+                }
+                if (annotation.annotationType().equals(LogOut.class)) {
+                    LogOut logAnno = ((LogOut) annotation);
                     logResult = logAnno.logResult();
                     logThis = logAnno.logThis();
                 }

@@ -104,31 +104,33 @@ public class AbstractLogAdapterTestCase {
 
     @Test
     public void testToMessageAfterNoArgs() throws Exception {
-        ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(null, true, false, this, true, true);
-        Object message = logAdapter.toMessage("fooMethod", 0, "res", descriptor);
-        assertEquals("returning: fooMethod():res", message);
+        MethodParameter[] arNames = {new MethodParameter("String", "v1"), new MethodParameter("String", "v2")};
+        ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(arNames, true, false, this, true, true);
+        Object message = logAdapter.toMessage("fooMethod", new Object[]{"v1", "v2"}, "res", descriptor);
+        assertEquals("returning: fooMethod(String v1=v1, String v2=v2): res", message);
     }
 
     @Test
     public void testToMessageAfterNoArgsVoid() throws Exception {
         ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(null, true, false, this, true, true);
-        Object message = logAdapter.toMessage("fooMethod", 0, Void.TYPE, descriptor);
-        assertEquals("returning: fooMethod():void", message);
+        Object message = logAdapter.toMessage("fooMethod", new Object[]{}, Void.TYPE, descriptor);
+        assertEquals("returning: fooMethod(): void", message);
     }
 
     @Test
     public void testToMessageAfter() throws Exception {
         MethodParameter[] arNames = {new MethodParameter("String", "res")};
-        ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(arNames, true, true, this, true);
-        Object message = logAdapter.toMessage("fooMethod", 2, "res", descriptor);
-        assertEquals("returning: fooMethod(2 arguments): res", message);
+        ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(arNames, true, false, this, true);
+        Object message = logAdapter.toMessage("fooMethod", new Object[]{"res"}, "res", descriptor);
+        assertEquals("returning: fooMethod(String res=res): res", message);
     }
 
     @Test
     public void testToMessageAfterVoid() throws Exception {
-        ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(null, true, false, this, true, true);
-        Object message = logAdapter.toMessage("fooMethod", 2, Void.TYPE, descriptor);
-        assertEquals("returning: fooMethod(2 arguments): void", message);
+        MethodParameter[] arNames = {new MethodParameter("String", "v1"), new MethodParameter("String", "v2")};
+        ArgumentDescriptor descriptor = TestSupportUtility.createArgumentDescriptor(arNames, true, false, this, true, true);
+        Object message = logAdapter.toMessage("fooMethod", new Object[]{"v1", "v2"}, Void.TYPE, descriptor);
+        assertEquals("returning: fooMethod(String v1=v1, String v2=v2): void", message);
     }
 
     @Test

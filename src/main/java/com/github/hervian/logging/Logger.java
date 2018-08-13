@@ -86,30 +86,30 @@ public class Logger {
      *
      * @param logger asdf
      * @param method asdf
-     * @param argCount asdf
+     * @param args asdf
      * @param result asdf
      * @param argumentDescriptor asdf
      * @param logLevel asdf
      */
-   public void logAfter(Log logger, String method, int argCount, Object result, ArgumentDescriptor argumentDescriptor, LogLevel logLevel) {
+   public void logAfter(Log logger, String method, Object[] args, Object result, ArgumentDescriptor argumentDescriptor, LogLevel logLevel) {
        switch (logLevel) {
        case DEBUG:
-           logger.debug(logAdapter.toMessage(method, argCount, result, argumentDescriptor));
+           logger.debug(logAdapter.toMessage(method, args, result, argumentDescriptor));
            break;
        case ERROR:
-           logger.error(logAdapter.toMessage(method, argCount, result, argumentDescriptor));
+           logger.error(logAdapter.toMessage(method, args, result, argumentDescriptor));
            break;
        case FATAL:
-           logger.fatal(logAdapter.toMessage(method, argCount, result, argumentDescriptor));
+           logger.fatal(logAdapter.toMessage(method, args, result, argumentDescriptor));
            break;
        case INFO:
-           logger.info(logAdapter.toMessage(method, argCount, result, argumentDescriptor));
+           logger.info(logAdapter.toMessage(method, args, result, argumentDescriptor));
            break;
        case TRACE:
-           logger.trace(logAdapter.toMessage(method, argCount, result, argumentDescriptor));
+           logger.trace(logAdapter.toMessage(method, args, result, argumentDescriptor));
            break;
        case WARN:
-           logger.warn(logAdapter.toMessage(method, argCount, result, argumentDescriptor));
+           logger.warn(logAdapter.toMessage(method, args, result, argumentDescriptor));
            break;
        default:
            throw new UnsupportedOperationException(
