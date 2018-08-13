@@ -1,3 +1,23 @@
+Overview
+========
+Introduces annotations that weaves log entering and/or log exiting statements into your code.  
+Example:  
+```java
+    @LogAround(logResult = true)
+    @GetMapping(path="products/test", produces = "application/json")
+    @ApiOperation(value = "assdfasdf")
+    public String test(@Lp String statement){
+    	return statement;
+    }
+```
+Having added the `@LogAround` annotation to the method (and given that the proper configuration is in place, see the class `LoggerConfig` further down in this readme) the following log statements will be created when calling above endpoint and passing the string `helloworld`: 
+
+When the method has been entered:  
+`c.g.h.l.Logger - <<< PDSController.test(String statement=helloworld)`  
+
+Immediately before exiting the method:  
+`c.g.h.l.Logger - >>> PDSController.test(String statement=helloworld): helloworld`
+
 This repository is a modified clone of https://github.com/nickvl/aop-logging
 ============================================================================
 
