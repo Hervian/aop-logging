@@ -85,9 +85,7 @@ abstract class AbstractLogAdapter implements LogAdapter {
         }
         if (args.length > 0) {
           //Cut off the last ', ' which was added in last loop iteration
-            if (argumentDescriptor.nextArgumentIndex(0) != -1) {
-                buff.setLength(buff.length() - 2);
-            }
+            buff.setLength(buff.length() - 2);
         }
         buff.append(")");
 

@@ -108,10 +108,6 @@ public final class ArgumentDescriptor {
          * @return constructor
          */
         public ArgumentDescriptor build() {
-            if (argumentCount == 0) {
-                return NO_ARGUMENTS_DESCRIPTOR;
-            }
-
             MethodParameter[] methodParameters = getArrayOfMethodParameters();
 
             BitSet lpParameters = getMethodParameters(Lp.class);
@@ -125,7 +121,7 @@ public final class ArgumentDescriptor {
             Class<?>[] parameterTypes = method.getParameterTypes();
             String[] argNames = parameterNameDiscoverer.getParameterNames(method);
 
-            MethodParameter[] methodParameters = new MethodParameter[parameterTypes.length];
+            MethodParameter[] methodParameters = parameterTypes == null || parameterTypes.length == 0 ? null : new MethodParameter[parameterTypes.length];
             for (int i = 0; i < parameterTypes.length; i++) {
                 methodParameters[i] = new MethodParameter(parameterTypes[i].getSimpleName(), argNames == null ? null : argNames[i]);
             }
