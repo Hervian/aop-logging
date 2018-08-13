@@ -1,3 +1,10 @@
+This repository is a modified clone of https://github.com/nickvl/aop-logging
+============================================================================
+
+Reasons for cloning and modifiyng original project:
+1. In both the original project and in this repository the annotation @Lp is used in front of method parameters to signify that the given method parameter should be logged, i.e. when logging that the logic is not entering and/or existing the method, the @Lp annotated method parameters will also be logged. In the original project, however, there was no way to *only* log the fact that you are entering and/or exiting the method, i.e. to not log any method parameters. This is because the logic interpreted the lack of any @Lp annotations as meaning: "Log all method parameters". This project interprets the lack of any @Lp annotations as "Log no method parameters.". To log all method parameters you must annotate all method parameters.
+2. The original project defined the log level through the annotation type (@LogInfo, @LogError etc) and the scope (log entering, log exiting or both) through annotation members (`@LogInfo(LogPoint.IN)`). This project turns this around: Now the scope is given by the annotation type (`@LogAround`, `@LogBefore`, `@LogAfter`) and the log leven is defined through the annotation type members (`@LogAround(LogLevel.WARNING)`) with log level INFO being the default.
+
 aop-logging
 ===========
 
