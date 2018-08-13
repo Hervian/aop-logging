@@ -1,9 +1,11 @@
 This repository is a modified clone of https://github.com/nickvl/aop-logging
 ============================================================================
 
-Reasons for cloning and modifiyng original project:
-1. In both the original project and in this repository the annotation @Lp is used in front of method parameters to signify that the given method parameter should be logged, i.e. when logging that the logic is not entering and/or existing the method, the @Lp annotated method parameters will also be logged. In the original project, however, there was no way to *only* log the fact that you are entering and/or exiting the method, i.e. to not log any method parameters. This is because the logic interpreted the lack of any @Lp annotations as meaning: "Log all method parameters". This project interprets the lack of any @Lp annotations as "Log no method parameters.". To log all method parameters you must annotate all method parameters.
+Due to a fundamental API change I decided to to fork https://github.com/nickvl/aop-logging instead of issuing a pull request against tje original project. In addition to aforementioned API change this version of the logger project also contains a number of additional featues. Elaboration of the changes:
+1. **API change**: In both the original project and in this repository the annotation @Lp is used in front of method parameters to signify that the given method parameter should be logged. In the original project, however, there was no way to *only* log the fact that you are entering and/or exiting the method, i.e. to not log any method parameters. This is because the logic interpreted the lack of any @Lp annotations as meaning: "Log all method parameters". This project interprets the lack of any @Lp annotations as "Log no method parameters.". To log all method parameters you must annotate all method parameters.
 2. The original project defined the log level through the annotation type (@LogInfo, @LogError etc) and the scope (log entering, log exiting or both) through annotation members (`@LogInfo(LogPoint.IN)`). This project turns this around: Now the scope is given by the annotation type (`@LogAround`, `@LogBefore`, `@LogAfter`) and the log leven is defined through the annotation type members (`@LogAround(LogLevel.WARNING)`) with log level INFO being the default.
+3. This project makes it possible to log the value of "this" (both when entering and exiting the method). See fx the annotation type member `LogAround.logThis` which defaults to false.
+4. This project makes it possible to customize the log string in various ways. You can now customize the log entering/exiting string  and you can decide whether or not to include the fully qualified class name of the method being logged. See the constructor of UniversalLogAdapter.
 
 aop-logging
 ===========
@@ -82,11 +84,22 @@ Quick start
         private static final boolean SKIP_NULL_FIELDS = true;
         private static final int CROP_THRESHOLD = 7;
         private static final Set<String> EXCLUDE_SECURE_FIELD_NAMES = Collections.<String>emptySet();
+        private static final String ENTERING = ">>>";
+        private static final String RETURNING = "<<<";
     
         @Bean
         public AOPLogger getLoggerBean() {
             AOPLogger aopLogger = new AOPLogger();
-            aopLogger.setLogAdapter(new UniversalLogAdapter(SKIP_NULL_FIELDS, CROP_THRESHOLD, EXCLUDE_SECURE_FIELD_NAMES));
+            UniversalLogAdapter adapter = UniversalLogAdapter
+        		.builder()
+        		.skipNullFields(SKIP_NULL_FIELDS)
+        		.cropThreshold(CROP_THRESHOLD)
+        		.excludeFieldNames(EXCLUDE_SECURE_FIELD_NAMES)
+        		.entryString(ENTERING)
+        		.exitString(RETURNING)
+        		.methodNamePrefix(MethodNamePrefix.SIMPLE_CLASS_NAME)
+        		.build();
+            aopLogger.setLogAdapter(adapter);
             return aopLogger;
         }
     }
@@ -106,13 +119,13 @@ Quick start
     import com.me.shop.shop.oxm.PaymentContractResponse;
     import com.me.shop.shop.NotEnoughMoneyException;
 
-    import com.github.nickvl.xspring.core.log.aop.annotation.LogDebug;
-    import com.github.nickvl.xspring.core.log.aop.annotation.LogInfo;
+    import com.github.nickvl.xspring.core.log.aop.annotation.LogAround;
+    import com.github.nickvl.xspring.core.log.aop.annotation.LogIn;
 
     /**
      * Billing shop endpoint.
      */
-    @LogDebug
+    @LogAround
     @Endpoint
     public class BillingShopEndpoint {
 
@@ -121,7 +134,7 @@ Quick start
         @Autowired
         private ShopService shop;
 
-        @LogInfo
+        @LogIn
         @LogException(value = {@Exc(value = Exception.class, stacktrace = true)}, warn = {@Exc({IllegalArgumentException.class, NotEnoughMoneyException.class})})
         @ResponsePayload
         @PayloadRoot(localPart = "PaymentContract", namespace = NS)
