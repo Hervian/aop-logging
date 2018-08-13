@@ -18,6 +18,8 @@ When the method has been entered:
 Immediately before exiting the method:  
 `c.g.h.l.Logger - >>> PDSController.test(String statement=helloworld): helloworld`
 
+**Please  notice that the log statement written can be configured and customized in a number of ways. See below.**
+
 This repository is a modified clone of https://github.com/nickvl/aop-logging
 ============================================================================
 
